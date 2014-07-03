@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"	
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<head>
+
+  <!-- START: META DATA -->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+        <meta name="language" content="en">
+        <meta name="author" content="General Electric Global Research">
+        <meta name="subject" content="Multi-Modality Portable System for Pressure Ulcer Prevention and Care">
+  <!-- END: META DATA -->
+   
+ <title>Multi-Modality Portable System for Pressure Ulcer Prevention and Care</title>
+
+
+<link href="/static/css/mmpspupc.css" media="all" rel="stylesheet" type="text/css">
+<link href="/static/css/template_styles.css" media="all" rel="stylesheet" type="text/css">
+
+<!-- ****************************** LINKS TO JAVASCRIPT CODE FOR PAGES *********************************** -->
+
+<!-- jQuery Library  -->
+<script src="/static/js/jquery-2.1.0.js" type="text/javascript"></script>
+<script src="/static/js/jquery-ui-1.10.4.custom.js" type="text/javascript" ></script>
+<script src="/static/js/script.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="/va_files/foresee/foresee-trigger.js"></script> -->
+<!-- <script type="text/javascript" src="/explore/scripts/exploreva-pixels.js"></script> -->
+
+<link rel="Stylesheet"href="/static/css/redmond/jquery-ui-1.10.4.custom.css" type="text/css" media="screen"/>
+<!-- <link rel="Stylesheet" type="text/css" media="screen" href="/explore/govdelivery/css/VAAccess-Global.css" /> -->
+
+</head>
+<body>
+
+<!-- BACK GROUND WRAPPER EFFECTS -->   
+
+<div id="bg-main">
+<div id="bg-middle-effect"> 
+<div id="site-wrapper">
+
+<!-- Include logos -->
+<span metal:use-macro="logo.macros['va-logo']" />
+    
+<!-- Include navigation bar -->
+<span metal:use-macro="nav.macros['va-navigation']" />
+      
+<div id="content-main">
+<div id="summary-figure">
+	<img src="/static/images/program_overview_new.png" alt="Summary Figure" width="928" height="552" />
+</div><!-- Summary figure -->
+</div><!-- content-main -->
+	           
+    	</div><!-- End Site Wrapper -->
+       
+    </div><!-- End Middle Effect -->
+    
+  </div><!--End BG Main -->
+<div style="position:relative; clear:both; height:1px; overflow:hidden"> </div>
+            
+<!-- Include footer -->
+<span metal:use-macro="footer.macros['va-footer']" />
+
+        
+</body>
+</html>

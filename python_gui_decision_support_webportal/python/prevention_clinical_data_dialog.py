@@ -1,0 +1,234 @@
+import util
+import wx
+from ObjectListView import ObjectListView, Filter
+from prevention_clinical_data import PreventionClinicalData
+from prevention_clinical_data_olv import OlvPreventionClinicalData, OlvPreventionClinicalDataCols
+from prevention_clinical_data_controller import PreventionClinicalDataController
+from add_modify_pcd_dialog import AddModifyPCDDialog
+
+########################################################################
+class PreventionClinicalDataDialog(wx.Panel):
+    """
+    This class implements the generic select/add/update/delete dialog for a database object.
+    It constructs the list of objects and places them in an ObjectListView widget.
+    It then implements the button handlers for calling the add_modify_dialog to add or modify
+    the object. Selection and deletion are handled in this dialog by calling the
+    olv_dialog_controller controller.
+    Methods:
+        __init__(parent, db, obj, objOlv, objOlvCols, mode) - creates the widgets in the panel and performs initialization
+        getSelectedObject() - Gets the selected object in the ObjectListView
+        onAddRecord(event) - Button handler to add a record to the database
+        onEditRecord(event) - Button handler to edit a record
+        onDeleteRecord(event) - Button handler to delete a record
+        onSearch(event) - Search field handler to search database based on the user's filter choice and keyword
+        onSelectRecord(event) - Button handler to select a record
+        onShowAllRecord(event) - Button handler to update the record list to show all of them
+        setResultsOlv() - Sets the columns and objects in the ObjectListView
+        showAllRecords() - Shows all records in the object list view control
+    """
+
+    #----------------------------------------------------------------------
+    def __init__(self, parent, db, mode="Add-Update-Delete"):
+        """
+        Constructor which creates the modal dialog and its widgets, instantiates an
+        ObjectlistView and populates it with the results from a query containing all
+        database objects in a class.
+        Arguments:
+            parent - Parent window
+            db - Database connection object
+            patientId - Patient Id.
+            mode - Dialog mode which can be either "Add-Update-Delete" or "Select"
+        """
+        self.db = db
+        self.obj = PreventionClinicalData
+        self.objOlv = OlvPreventionClinicalData
+        self.objOlvCols = OlvPreventionClinicalDataCols()
+        wx.Panel.__init__(self, parent)
+        self.controller = PreventionClinicalDataController(db, self.obj, self.objOlv, self.objOlvCols)
+        self.results = []
+        self.patient_id = -1
+        self.patient_name = ""
+        
+        font = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD) 
+        patientLbl = wx.StaticText(self, label="Patient: ")
+        patientLbl.SetFont(font)
+        self.patientTxt = wx.TextCtrl(self, value="None selected",style=wx.TE_READONLY|wx.NO_BORDER)
+        self.patientTxt.SetFont(font)
+        patientSizer = wx.BoxSizer(wx.HORIZONTAL)
+        patientSizer.Add(patientLbl,0)
+        patientSizer.Add(self.patientTxt,1,wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        searchSizer = wx.BoxSizer(wx.HORIZONTAL)
+        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD) 
+        
+        # create the search related widgets
+        searchByLbl = wx.StaticText(self, label="Search By:")
+        searchByLbl.SetFont(font)
+        searchSizer.Add(searchByLbl, 0, wx.ALL, 5)
+        
+        self.search = wx.SearchCtrl(self, style=wx.TE_PROCESS_ENTER)
+        self.search.Bind(wx.EVT_TEXT_ENTER, self.onSearch)
+        searchSizer.Add(self.search, 0, wx.ALL, 5)
+        
+        self.resultsOlv = ObjectListView(self, style=wx.LC_REPORT
+                                                        |wx.SUNKEN_BORDER)
+        self.resultsOlv.SetEmptyListMsg("No Records Found")
+        self.setResultsOlv()
+        
+        # create the button row
+        if mode == "Select-Only":
+            self.selectRecordBtn = wx.Button(self, label="Select")
+            self.selectRecordBtn.Bind(wx.EVT_BUTTON, self.onSelectRecord)
+            btnSizer.Add(self.selectRecordBtn, 0, wx.ALL, 5)
+        
+        if mode == "Add-Update-Delete":
+            self.addRecordBtn = wx.Button(self, label="Add")
+            self.addRecordBtn.Bind(wx.EVT_BUTTON, self.onAddRecord)
+            btnSizer.Add(self.addRecordBtn, 0, wx.ALL, 5)
+        
+            self.editRecordBtn = wx.Button(self, label="Edit")
+            self.editRecordBtn.Bind(wx.EVT_BUTTON, self.onEditRecord)
+            btnSizer.Add(self.editRecordBtn, 0, wx.ALL, 5)
+        
+            self.deleteRecordBtn = wx.Button(self, label="Delete")
+            self.deleteRecordBtn.Bind(wx.EVT_BUTTON, self.onDelete)
+            btnSizer.Add(self.deleteRecordBtn, 0, wx.ALL, 5)
+        
+        self.showAllBtn = wx.Button(self, label="Show All")
+        self.showAllBtn.Bind(wx.EVT_BUTTON, self.onShowAllRecord)
+        btnSizer.Add(self.showAllBtn, 0, wx.ALL, 5)
+        
+        mainSizer.Add(patientSizer, 0, wx.CENTER)
+        mainSizer.Add(searchSizer)
+        mainSizer.Add(self.resultsOlv, 1, wx.ALL|wx.EXPAND, 5)
+        mainSizer.Add(btnSizer, 0, wx.CENTER)
+        self.SetSizer(mainSizer)
+        print self.patientTxt.GetTextExtent(self.patientTxt.GetValue())
+        self.patientTxt.SetSize(self.patientTxt.GetTextExtent(self.patientTxt.GetValue()))
+        self.patientTxt.SetMinSize(self.patientTxt.GetTextExtent(self.patientTxt.GetValue()))
+        #patientSizer.RecalcSizes()
+        # disable all buttons initially
+        self.addRecordBtn.Disable()
+        self.editRecordBtn.Disable()
+        self.deleteRecordBtn.Disable()
+        self.showAllBtn.Disable()
+        
+    #----------------------------------------------------------------------
+    def getSelectedObject(self):
+        """
+        Gets the selected object in the ObjectListView
+        """
+        return self.selectedObject
+    
+    #----------------------------------------------------------------------
+    def onAddRecord(self, event):
+        """
+        Button handler to add a record to the database
+        """
+        dlg = AddModifyPCDDialog(self.controller, self.obj, self.db, title="Add", addRecord=True, patientId=self.patient_id)
+        rc = dlg.ShowModal()
+        if rc == 0:
+            self.showAllRecords()
+        
+    #----------------------------------------------------------------------
+    def onEditRecord(self, event):
+        """
+        Button handler to edit a record
+        """
+        selectedRow = self.resultsOlv.GetSelectedObject()
+        if selectedRow == None:
+            util.showMessageDialog("No row selected!", "Error")
+            return
+        dlg = AddModifyPCDDialog(self.controller, self.obj, self.db, row=selectedRow, title="Modify",
+                                           addRecord=False)
+        rc = dlg.ShowModal()
+        if rc == 0:
+            self.showAllRecords()
+        
+    #----------------------------------------------------------------------
+    def onDelete(self, event):
+        """
+        Button handler to delete a record
+        """
+        selectedRow = self.resultsOlv.GetSelectedObject()
+        if selectedRow == None:
+            util.showMessageDialog("No row selected!", "Error")
+            return
+        (rc, msg) = self.controller.deleteRecord(selectedRow.getKey())
+        # Check return code from above and put up appropriate message dialog
+        if rc == 0:
+            util.showMessageDialog("Record Deleted Successfully!", "Success!", wx.ICON_INFORMATION)
+        else:
+            util.showMessageDialog(msg, "Failure!", wx.ICON_INFORMATION)
+        self.showAllRecords()
+        
+    #----------------------------------------------------------------------
+    def onSearch(self, event):
+        """
+        Search field handler to search database based on the user's filter choice and keyword
+        """
+        keyword = self.search.GetValue()
+        Filter.TextSearch(self.resultsOlv,columns=(), text=keyword)
+        
+    #----------------------------------------------------------------------
+    def onSelectRecord(self, event):
+        """
+        Button handler to select a record
+        """
+        selectedRow = self.resultsOlv.GetSelectedObject()
+        if selectedRow == None:
+            util.showMessageDialog("No row selected!", "Error")
+            return
+        key = selectedRow.getKey()
+        self.selectedObject = self.controller.getRecordByKey(key)
+        self.EndModal(0)
+        
+    #----------------------------------------------------------------------
+    def onShowAllRecord(self, event):
+        """
+        Button handler to update the record list to show all of them
+        """
+        self.showAllRecords()
+        
+    #----------------------------------------------------------------------
+    def setResultsOlv(self):
+        """
+        Sets the columns and objects in the ObjectListView
+        """
+        cd = self.objOlvCols.getColumnDefinitions()
+        # print len(cd)
+        self.resultsOlv.SetColumns(self.objOlvCols.getColumnDefinitions())
+        self.resultsOlv.SetObjects(self.results)
+        
+    #----------------------------------------------------------------------
+    def showAllRecords(self):
+        """
+        Shows all records in the object list view control
+        """
+        self.results = self.controller.getAllForOLView(self.patient_id)
+        self.setResultsOlv()
+        
+    #----------------------------------------------------------------------
+    def setPatient(self, patientId, patientName):
+        """
+        Sets the name of the patient
+        """
+        self.patient_id = patientId
+        self.patient_name = patientName
+        if patientName == None:
+            self.patientTxt.SetValue("None selected")
+            self.addRecordBtn.Disable()
+            self.editRecordBtn.Disable()
+            self.deleteRecordBtn.Disable()
+            self.showAllBtn.Disable()
+        else:
+            self.patientTxt.SetValue(patientName)
+            self.addRecordBtn.Enable()
+            self.editRecordBtn.Enable()
+            self.deleteRecordBtn.Enable()
+            self.showAllBtn.Enable()
+        self.patientTxt.SetSize(self.patientTxt.GetTextExtent(self.patientTxt.GetValue()))
+        self.patientTxt.SetMinSize(self.patientTxt.GetTextExtent(self.patientTxt.GetValue()))
+       

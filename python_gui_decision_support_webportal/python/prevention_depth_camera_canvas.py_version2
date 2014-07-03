@@ -1,0 +1,119 @@
+# Copyright (C) 2009 General Electric Company
+#
+# This software is intellectual property of General Electric Co.
+# and may not be copied or redistributed without express written consent.
+#
+# python -c "import gevxlpy.security.proc.test.proc_aui_test"
+
+import gevxlpy.util.configuration as cfg
+import gevxl.gui_wx as gui_wx
+import gevxl.img as img
+import gevxl.util as util
+import gevxl.framework as framework
+import vxl.vil as vil
+import vxl.vcl as vcl
+import wx
+from wx import glcanvas
+import wx.aui
+import gevxl.vid as vid
+import gevxl.security.pressure_ulcer.pressure_ulcer as pu
+from experiment_config import ExperimentConfig
+
+class PreventionDepthCameraCanvas:
+    """
+    This class creates the OpenGL canvas to be used for display depth camera video.
+    It also, creates and runs the C++ class which controls the camera and the processing
+    algorithms.
+    Methods:
+        __init__(parent, ID, title) - initializes the OpenGL canvas
+        GetWindow() - gets the wxWidget window that is part of the canvas
+    """
+    def __init__(self, parent, ID, title, db, experimentId):
+        """
+        This method creates and initializes the OpenGL canvas and creates the camera
+        procedure for controlling the camera and running the image processing algorithms.
+        The camera procedure is a C++ class that is exposed to Python via SWIG.
+        """
+        self.db = db
+        self.parent_ = parent
+        self.window_id_ = ID
+        
+        # path = 'C:/Barry/projects/mmpspupcva/src/python/resources/test_depth_camera_config.py'
+        # print 'Importing configuration from '+path
+        #c = cfg.config_file_from_python_script(path)
+        
+        print "PreventionDepthCameraCanvas constructor: experimentId = %d" % experimentId
+        c = ExperimentConfig()
+        self.config_file = c.SetFromDb(self.db, experimentId)
+
+        #self.proc_ = pu.pu_camera_source_proc()
+        self.proc_ = pu.pu_prevention_chaining_process()
+        
+        # if not self.proc_.configure(c[0]): 
+        if not self.proc_.configure(self.config_file): 
+            print 'Configure failed.'
+            return
+        if not self.proc_.initialize():
+            print 'Initialize failed.'
+            return
+
+        self.ctrl_ = framework.process_control()
+        self.ctrl_.set_process(self.proc_)
+        self.ctrl_.initialize_control(self.ctrl_.ASYNCHRONOUS);
+        self.ctrl_.execute_one_step(True)
+        self.ctrl_.execute_one_step(True)
+        #self.ctrl_.execute_continously()
+        
+        attribList = (glcanvas.WX_GL_RGBA, # RGBA
+                      glcanvas.WX_GL_DOUBLEBUFFER, # Double Buffered
+                      glcanvas.WX_GL_BUFFER_SIZE, 32)
+        self.canvas_ = gui_wx.canvas(self.parent_, self.window_id_, wx.DefaultPosition, wx.Size(640, 480), 0, title, attribList)
+        
+        self.canvas_.set_process_control(self.ctrl_)
+        # Create visualizers
+        self.viz_ = gui_wx.direct_visualizer()
+        # self.overlay_viz_ = img.visualizer_2d_buffered()
+        # Visualizer visualizes into canvas
+        self.viz_.set_output_canvas(self.canvas_)
+        # Tell canvas about visualizer (needed for resizing when proc is paused)
+        self.canvas_.set_proc_visualizer(self.viz_)
+        # Tell OpenGL visualizer owned by proc about a secondary visualizer 
+        # used by clients for overlays.
+        # self.viz_.add_visualizer(self.overlay_viz_);
+        # Tell canvas about this overlay visualizer. This visualizer can be 
+        # used by clients during events such as on_mouse().
+        # self.canvas_.set_visualizer(self.overlay_viz_);
+        # Don't use swap buffer if we don't double buffer.
+        self.viz_.use_swap_buffer_on_flush(True);
+        # Add a canvas view client.
+        # This is actually a handler client.
+        self.canvas_.add_canvas_view_client();
+  
+        # self.pixel_picking_client_ = new pu_pixel_picking_client();
+        # self.pixel_picking_client_.set_proc(self.proc_);
+        # self.add_client(self.pixel_picking_client_);
+        # self.canvas_.add_client(self.pixel_picking_client_);
+
+        # Tell process about visualizer.
+        self.proc_.set_visualizer(self.viz_);
+        return
+
+        
+    def GetWindow(self):
+        """
+        This method returns the wxWindow associated with the OpenGL canvas.
+        """
+        return self.parent_.FindWindowById(self.window_id_)
+ 
+           
+    def TimeToQuit(self, event):
+        self.ctrl_.terminate_execution()
+        self.ctrl_.wait_until_paused()
+        self.proc_=None
+        self.viz_.set_output_canvas(None)
+        self.viz_=None
+        self.ctrl_=None
+        self.canvas_=None
+        self.Unbind(wx.EVT_CLOSE)
+        self.Close(True)
+        

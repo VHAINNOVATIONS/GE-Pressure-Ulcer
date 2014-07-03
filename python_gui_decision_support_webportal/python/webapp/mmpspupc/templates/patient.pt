@@ -1,0 +1,372 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"	
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<head>
+
+  <!-- START: META DATA -->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+        <meta name="language" content="en">
+        <meta name="author" content="General Electric Global Research">
+        <meta name="subject" content="Multi-Modality Portable System for Pressure Ulcer Prevention and Care">
+  <!-- END: META DATA -->
+   
+ <title>Multi-Modality Portable System for Pressure Ulcer Prevention and Care</title>
+
+
+<!-- Import our stylesheet and others required by various library packages -->
+<link rel="Stylesheet"href="/static/css/redmond/jquery-ui-1.10.4.custom.css" type="text/css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/demo_table_jui.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/ColVis.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/ColReorder.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/TableTools_JUI.css">
+
+<link href="/static/css/mmpspupc.css" media="all" rel="stylesheet" type="text/css">
+<link href="/static/css/template_styles.css" media="all" rel="stylesheet" type="text/css">
+
+<!-- ****************************** LINKS TO JAVASCRIPT CODE FOR PAGES *********************************** -->
+
+<!-- jQuery Library  -->
+<script src="/static/js/jquery-2.1.0.js" type="text/javascript"></script>
+<script src="/static/js/jquery-ui-1.10.4.custom.js" type="text/javascript" ></script>
+<!-- Spinner and loading indicators -->
+<script src="/static/js/jquery.spinner.js" type="text/javascript"></script>
+<script src="/static/js/script.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="/va_files/foresee/foresee-trigger.js"></script> -->
+<!-- <script type="text/javascript" src="/explore/scripts/exploreva-pixels.js"></script> -->
+<!-- Import Datatables functionality scripts -->
+<script type="text/javascript" src="/static/js/DataTables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ColVis.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ColReorder.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ZeroClipboard.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/TableTools.js"></script>
+<script type="text/javascript">
+
+var patientId = ${request.GET.get('patient_id',0)};
+var admissionTable = new Object();
+var assessmentTable = new Object();
+var scoreTable = new Object();
+var foodTable = new Object();
+var planTable = new Object();
+
+// This is the main JQuery page function that gets executed after the page is loaded and the
+// the DOM elements are created.
+$(function() {
+	$('#tablecontainer1').hide();
+	$('#tablecontainer2').hide();
+	$('#tablecontainer3').hide();
+	$('#tablecontainer4').hide();
+	$('#tablecontainer5').hide();
+	$('#patient-dropdown').change(
+		function(event) {
+			patientId = $(event.target).val();
+			$('#patient-dropdown').spinner({img:'/static/images/spinner.gif'});
+			// The next JQuery call populates the patient admission table.
+			// This is done by making an AJAX call to the server using the URL /{application_name}/patientadmission
+			// A MVC controller method is invoked and the response is returned in JSON format 
+			admissionTable = [];
+			$.getJSON('patientadmission',{patient_id : patientId},function(response,status,xhr) {
+				if (status == 'success') {
+					admissionTable = response.patientAdmission;
+					generateTable1();
+					$('#tablecontainer1').show();
+					$('#table_canvas1').dataTable().fnAdjustColumnSizing();
+				}
+			});
+			// The next JQuery call populates the patient admission table.
+			// This is done by making an AJAX call to the server using the URL /{application_name}/patientassessment
+			// A MVC controller method is invoked and the response is returned in JSON format 
+			assessmentTable = [];
+			$.getJSON('patientassessment',{patient_id : patientId},function(response,status,xhr) {
+				if (status == 'success') {
+					assessmentTable = response.patientAssessment;
+					generateTable2();
+					$('#tablecontainer2').show();
+					$('#table_canvas2').dataTable().fnAdjustColumnSizing();
+				}
+			});
+			// The next JQuery call populates the patient admission table.
+			// This is done by making an AJAX call to the server using the URL /{application_name}/bradenscores
+			// A MVC controller method is invoked and the response is returned in JSON format 
+			scoreTable = [];
+			$.getJSON('bradenscores',{patient_id : patientId},function(response,status,xhr) {
+				if (status == 'success') {
+					scoreTable = response.bradenScores;
+					generateTable3();
+					$('#tablecontainer3').show();
+					$('#table_canvas3').dataTable().fnAdjustColumnSizing();
+				}
+			});
+			// The next JQuery call populates the patient admission table.
+			// This is done by making an AJAX call to the server using the URL /{application_name}/nutritionalstatus
+			// A MVC controller method is invoked and the response is returned in JSON format 
+			foodTable = [];
+			$.getJSON('nutritionalstatus',{patient_id : patientId},function(response,status,xhr) {
+				if (status == 'success') {
+					foodTable = response.nutritionalStatus;
+					generateTable4();
+					$('#tablecontainer4').show();
+					$('#table_canvas4').dataTable().fnAdjustColumnSizing();
+				}
+			});
+			// The next JQuery call populates the patient admission table.
+			// This is done by making an AJAX call to the server using the URL /{application_name}/treatmentplan
+			// A MVC controller method is invoked and the response is returned in JSON format 
+			planTable = [];
+			$.getJSON('treatmentplan',{patient_id : patientId},function(response,status,xhr) {
+				if (status == 'success') {
+					planTable = response.treatmentPlan;
+					generateTable5();
+					$('#tablecontainer5').show();
+					$('#table_canvas5').dataTable().fnAdjustColumnSizing();
+					$('#patient-dropdown').spinner('remove');
+				}
+			});
+		});
+		if (patientId <= 0) {
+			patientId = $('#patient-dropdown option:first').val();
+		}
+		$('#patient-dropdown').val(patientId);
+		$('#patient-dropdown').trigger('change');
+});
+
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable1() {
+	// Generate the table, specifying various options
+	$('#table_canvas1').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : admissionTable,
+		"aoColumns" : [{"sTitle" : "Admission Date", "mData" : "admission_date"},
+				 	   {"sTitle" : "Notes", "mData" : "admission_note"},
+				 	   {"sTitle" : "Factors Impairing Healing", "mData" : "factors_impairing_healing"}
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable2() {
+	// Generate the table, specifying various options
+	$('#table_canvas2').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : assessmentTable,
+		"aoColumns" : [{"sTitle" : "Date", "mData" : "assessment_date"},
+				 	   {"sTitle" : "Notes", "mData" : "assessment_note"}
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable3() {
+	// Generate the table, specifying various options
+	$('#table_canvas3').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : scoreTable,
+		"aoColumns" : [{"sTitle" : "Date", "mData" : "braden_scoring_date"},
+				 	   {"sTitle" : "Sensory Perception", "mData" : "sensory_perception_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Moisture", "mData" : "moisture_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Activity", "mData" : "activity_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Mobility", "mData" : "mobility_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Nutrition", "mData" : "nutrition_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Friction Shear", "mData" : "friction_shear_score", "sType" : "numeric", "sClass" : "dtRight"},
+				 	   {"sTitle" : "Total Score", "mData" : "id", "sType" : "numeric", "sClass" : "dtRight",
+							"mRender": function(data,display,full) {
+											return full.sensory_perception_score+full.moisture_score+full.activity_score+full.patient_id+full.mobility_score+full.nutrition_score+full.friction_shear_score;
+										}
+						}
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable4() {
+	// Generate the table, specifying various options
+	$('#table_canvas4').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : foodTable,
+		"aoColumns" : [{"sTitle" : "Date", "mData" : "assessment_date"},
+				 	   {"sTitle" : "Notes", "mData" : "nutritional_notes"}
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable5() {
+	// Generate the table, specifying various options
+	$('#table_canvas5').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : planTable,
+		"aoColumns" : [{"sTitle" : "Date", "mData" : "plan_date"},
+				 	   {"sTitle" : "Notes", "mData" : "plan_notes"}
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+</script>
+</head>
+<body>
+
+<!-- BACK GROUND WRAPPER EFFECTS -->   
+
+<div id="bg-main">
+<div id="bg-middle-effect"> 
+<div id="site-wrapper">
+
+<!-- Include logos -->
+<span metal:use-macro="logo.macros['va-logo']" />
+    
+<!-- Include navigation bar -->
+<span metal:use-macro="nav.macros['va-navigation']" />
+
+<div id="content-main">
+<div id="page-name-heading" class="table-name-heading">Patient Detail</div>
+<div id="patient-select-div">
+	<span id="patient-select-label">Patient:</span>
+	<select id="patient-dropdown" name="patientSelect" class="ui-widget ui-widget-content">
+		<option tal:repeat="p patients" value="${p.patient_id}">${p.patient_name} (${p.va_patient_id})</option>
+	</select>
+</div>
+<div id="patient-div">
+<div id="table-name-heading1" class="table-name-heading">Admission Information</div>
+<div id="tablecontainer1" class="tablecontainer">
+<div id="tableviewport1" class="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas1"></table>
+</div>
+</div>
+<div id="table-name-heading2" class="table-name-heading">Patient Assessment</div>
+<div id="tablecontainer2" class="tablecontainer">
+<div id="tableviewport2" class="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas2"></table>
+</div>
+</div>
+<div id="table-name-heading3" class="table-name-heading">Braden Scores</div>
+<div id="tablecontainer3" class="tablecontainer">
+<div id="tableviewport3" class="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas3"></table>
+</div>
+</div>
+<div id="table-name-heading4" class="table-name-heading">Nutritional Status</div>
+<div id="tablecontainer4" class="tablecontainer">
+<div id="tableviewport4" class="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas4"></table>
+</div>
+</div>
+<div id="table-name-heading5" class="table-name-heading">Current Treatment Plan</div>
+<div id="tablecontainer5" class="tablecontainer">
+<div id="tableviewport5" class="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas5"></table>
+</div>
+</div>
+</div><!-- patient-div -->
+</div><!-- content-main -->
+
+	           
+    	</div><!-- End Site Wrapper -->
+       
+    </div><!-- End Middle Effect -->
+    
+  </div><!--End BG Main -->
+<div style="position:relative; clear:both; height:1px; overflow:hidden"> </div>
+            
+<!-- Include footer -->
+<span metal:use-macro="footer.macros['va-footer']" />
+
+        
+</body>
+</html>

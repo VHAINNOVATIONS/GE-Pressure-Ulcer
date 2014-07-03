@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"	
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<head>
+
+  <!-- START: META DATA -->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+        <meta name="language" content="en">
+        <meta name="author" content="General Electric Global Research">
+        <meta name="subject" content="Multi-Modality Portable System for Pressure Ulcer Prevention and Care">
+  <!-- END: META DATA -->
+   
+ <title>Multi-Modality Portable System for Pressure Ulcer Prevention and Care</title>
+
+
+<!-- Import our stylesheet and others required by various library packages -->
+<link rel="Stylesheet"href="/static/css/redmond/jquery-ui-1.10.4.custom.css" type="text/css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/demo_table_jui.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/ColVis.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/ColReorder.css">
+<link rel="stylesheet" type="text/css" href="/static/css/DataTables/TableTools_JUI.css">
+
+<link href="/static/css/mmpspupc.css" media="all" rel="stylesheet" type="text/css">
+<link href="/static/css/template_styles.css" media="all" rel="stylesheet" type="text/css">
+
+<!-- ****************************** LINKS TO JAVASCRIPT CODE FOR PAGES *********************************** -->
+
+<!-- jQuery Library  -->
+<script src="/static/js/jquery-2.1.0.js" type="text/javascript"></script>
+<script src="/static/js/jquery-ui-1.10.4.custom.js" type="text/javascript" ></script>
+<!-- Spinner and loading indicators -->
+<script src="/static/js/jquery.spinner.js" type="text/javascript"></script>
+<script src="/static/js/script.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="/va_files/foresee/foresee-trigger.js"></script> -->
+<!-- <script type="text/javascript" src="/explore/scripts/exploreva-pixels.js"></script> -->
+<!-- Import Datatables functionality scripts -->
+<script type="text/javascript" src="/static/js/DataTables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ColVis.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ColReorder.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/ZeroClipboard.js"></script>
+<script type="text/javascript" src="/static/js/DataTables/TableTools.js"></script>
+<script type="text/javascript">
+
+var table = new Object();
+
+// This is the main JQuery page function that gets executed after the page is loaded and the
+// the DOM elements are created.
+$(function() {
+	$('#tablecontainer').hide();
+	// The next JQuery call populates the format types dropdown.
+	// This is done by making an AJAX call to the server using the URL /{application_name}/format-types
+	// A Spring MVC controller method is invoked and the response is returned in JSON format 
+	$.getJSON('patients',{},function(response,status,xhr) {
+		if (status == 'success') {
+			table = response.patients;
+			generateTable();
+			$('#tablecontainer').show();
+			$('#table_canvas').dataTable().fnAdjustColumnSizing();
+		}
+	});
+});
+
+	
+// The generateTable function generates a new Datatable containing the query results
+function generateTable() {
+	// Generate the table, specifying various options
+	$('#table_canvas').dataTable({
+		"sDom" : 'R<"H"TCf>rt<"F"ip>',
+		"aaData" : table,
+		"aoColumns" : [{"sTitle" : "VA Patient ID", "mData" : "va_patient_id",
+							"mRender": function(data,display,full) {
+											return '<a href="/patient-view?patient_id='+full.patient_id+'">'+data+'</a>';
+											}
+							},
+				 	  {"sTitle" : "Patient Name", "mData" : "patient_name"},
+					  ],
+		"aaSorting": [],
+		"bJQueryUI" : true,
+		"bAutoWidth" : true,
+		"bDeferRender" : true,
+		"bScrollCollapse" : true,
+		"sScrollX" : "100%",
+		"sScrollY" : "100%",
+		"bPaginate" : false,
+		"bDestroy" : true,
+		"bProcessing" : true,
+		"oTableTools" : {
+			"aButtons" : [ 
+				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
+				{"sExtends" : "pdf",  "mColumns" : "visible", "sPdfOrientation": "landscape", "sButtonClass": "dt_button_class"}
+			],
+			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
+		}
+	});
+}
+</script>
+</head>
+<body>
+
+<!-- BACK GROUND WRAPPER EFFECTS -->   
+
+<div id="bg-main">
+<div id="bg-middle-effect"> 
+<div id="site-wrapper">
+
+<!-- Include logos -->
+<span metal:use-macro="logo.macros['va-logo']" />
+    
+<!-- Include navigation bar -->
+<span metal:use-macro="nav.macros['va-navigation']" />
+      
+<div id="content-main">
+<div id="patients-div">
+<div id="table-name-heading">Patient List</div>
+<div id="tablecontainer">
+<div id="tableviewport">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_canvas"></table>
+</div>
+</div>
+</div><!-- patients-div -->
+</div><!-- content-main -->
+
+	           
+    	</div><!-- End Site Wrapper -->
+       
+    </div><!-- End Middle Effect -->
+    
+  </div><!--End BG Main -->
+<div style="position:relative; clear:both; height:1px; overflow:hidden"> </div>
+            
+<!-- Include footer -->
+<span metal:use-macro="footer.macros['va-footer']" />
+
+        
+</body>
+</html>

@@ -1,0 +1,340 @@
+﻿@charset "UTF-8";
+/* CSS Document */
+
+#gallery p {
+    padding: 0px;
+    text-align: center;
+}
+
+
+
+.slide div.description {
+    background: url("/opa/va_files/2012/images/bg-galley-text.png")  repeat-x scroll 0 top transparent;
+    float: left;
+    height: 200px !important;
+    left: -30px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    top: 215px;
+    width: 668px;
+    z-index: 50;
+}
+
+.text-control {
+    float: left;
+    height: 75px;
+    margin: 0px 10px 0 90px;
+    width: 570px;
+	position:static;
+}
+
+.text-control p {
+    color: #FFFFFF;
+    float: left;
+    font: 1.1em Arial,Helvetica,sans-serif;
+    margin-left: 0px;
+	margin-top:6px;
+    padding: 0;
+    text-align: left;
+}
+
+.slide .description p {
+    color: #FFFFFF;
+    font-size: 1em;
+    line-height: 120%;
+    text-align: left !important;
+}
+
+#slider-controls {
+    left: 4px;
+    position: absolute;
+    top: 220px;
+    z-index: 200;
+}
+
+#hp-slideshow h3 {
+    color: #FFFFFF;
+    font: 1.1em/150% Arial,Helvetica,sans-serif;
+	font-weight:bold;
+    text-transform: uppercase;
+	margin-top:0px; 
+	margin-bottom:0px;
+}
+
+#gallery .text-control a {font: normal normal normal 1.1em Arial, Helvetica, sans-serif; color:#FFFFFF; margin-top:10px; }
+
+#gallery .text-control a:hover {font: normal normal normal 1.1em Arial, Helvetica, sans-serif; text-decoration:underline; color:#FFFFFF;}
+
+#gallery a, #gallery a:visited { color: #8DE1FB; outline: medium none;text-decoration: none;}
+
+.boxgrid{  
+width: 325px;  
+height: 260px;  
+margin:10px;  
+float:left;  
+background:#161613;  
+border: solid 2px #8399AF;  
+overflow: hidden;  
+position: relative;  
+}
+  
+.boxgrid img{  
+position: absolute;  
+top: 0;  
+left: 0;  
+border: 0;  
+}  
+
+.boxcaption{  
+float: left;  
+position: absolute;  
+background: #000;  
+height: 100px;  
+width: 100%;  
+/* For IE 5-7 */  
+filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);  
+/* For IE 8 */  
+-MS-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";  
+}  
+
+.captionfull .boxcaption {  
+top: 260;  
+left: 0;  
+}  
+.caption .boxcaption {  
+top: 220;  
+left: 0;  
+}  
+
+
+
+#slider0 {
+width: 410px; /* important to be same as image width */
+height: 300px; /* important to be same as image height */
+position: relative; /* important */
+	overflow: hidden; /* important */
+}
+
+#slider1, #slider2 {
+width: 650px; /* important to be same as image width */
+height: 271px; /* important to be same as image height */
+position: relative; /* important */
+	overflow: hidden; /* important */
+}
+
+#slider0Content, #slider1Content, #slider2Content {
+width: 650px;
+position: absolute;
+	top: 0;
+	margin-left: 0;
+}
+.slider0Image, .slider1Image, .slider2Image {
+float: left;
+position: relative;
+	display: none;
+}
+.slider0Image span {
+position: absolute;
+	font: 10px/15px Arial, Helvetica, sans-serif;
+padding: 10px 13px;
+width: 384px;
+background-color: #000;
+filter: alpha(opacity=70);
+-moz-opacity: 0.7;
+	-khtml-opacity: 0.7;
+opacity: 0.7;
+color: #fff;
+display: none;
+}
+
+.slider1Image span, .slider2Image span {
+position: absolute;
+	font: 10px/15px Arial, Helvetica, sans-serif;
+padding: 10px 13px;
+width: 624px;
+background-color: #000;
+filter: alpha(opacity=70);
+-moz-opacity: 0.7;
+	-khtml-opacity: 0.7;
+opacity: 0.7;
+color: #fff;
+display: none;
+}
+.clear {
+	clear: both;
+}
+.slider0Image span strong, .slider1Image span strong, .slider2Image span strong {
+font-size: 14px;
+}
+.top {
+	top: 0;
+	left: 0;
+}
+.bottom {
+	bottom: 0;
+	left: 0;
+}
+.left {
+	top: 0;
+	left: 0;
+	width: 110px !important;
+	height: 251px;
+}
+.right {
+	right: 0;
+	bottom: 0;
+	width: 90px !important;
+	height: 256px;
+}
+.offset {
+	left: 30px;
+}
+.offsetRight {
+	right: 40px;
+}
+
+/*Type 2 Fonts and typography*/
+
+#type2-special-message {
+    background: url("/opa/va_files/2012/images/slider/bg-hp-type2-text-area.jpg")  no-repeat scroll 0 top transparent;
+	float: right;
+    height: 308px;
+    position: relative;
+    right: 0px;
+    top: -372px;
+    width: 323px;
+    z-index: 10;
+}
+a.type2-link   {font-family: "Myriad Pro",Arial,Helvetica,sans-serif; color:#FFFFFF; text-decoration:none;}
+
+a.type2-link:link {font-family: "Myriad Pro",Arial,Helvetica,sans-serif; color:#FFFFFF;}
+
+a.type2-link:visited { color: #8DE1FB; outline: medium none; text-decoration: none;}
+
+a.type2-link:hover {text-decoration: underline;}
+
+a.type2-link  a img {border: medium none;}
+
+#type2-special-message h3 { font: normal normal normal 1.3em/150% Arial, Helvetica, sans-serif; text-transform:uppercase; color:#FFFFFF; margin:55px 0 15px 45px; width:259px; text-align:left;}
+
+#type2-special-message h2 {
+    font-family: "Myriad Pro",Arial,Helvetica,sans-serif;
+    font-size: 0.85em;
+    font-weight: normal;
+    position: absolute;
+    margin:0 0 15px 35px;
+	width:259px;
+	right: 0;
+    text-transform: uppercase;
+    top: 15px;
+}
+
+
+#type2-special-message p {
+    margin:0 0 10px 45px;
+	width:235px;    
+    color: #FFFFFF;
+    font-size: 1.15em;
+    line-height: 145%;
+    text-align: left !important;
+}
+
+/*Type 3 Fonts and typography*/
+
+#title-wrapper{width:960px; height:0px;}
+
+#streaming-wrapper{width:960px; height:373px; margin:2px 0px 0px 0px; background-color:#01133F; float:left; }
+
+#video-wrapper{width:960px; height:416px; margin:auto; background-image:url("/opa/va_files/2012/images/slider/bg-hp-slider.jpg"); background-repeat:no-repeat; }
+
+#ustream {height:373px; width:638px; float:left; padding:0px;  }
+
+#video-text{height:253px; width:251px; float:left; margin:157px 0px 0px 18px;}
+
+.page-title {
+    color: #000099;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 19px;}
+	
+
+
+#type3-special-message {
+    background: url("/opa/va_files/2012/images/slider/bg-hp-type3-text-area.jpg")  no-repeat scroll 0 top transparent;
+	float: right;
+    height: 370px;
+    position: relative;
+    right: 0px;
+    top: -372px;
+    width: 323px;
+    z-index: 10;
+}
+a.type3-link   {font-family: "Myriad Pro",Arial,Helvetica,sans-serif; color:#FFFFFF; text-decoration:none;}
+
+a.type3-link:link {font-family: "Myriad Pro",Arial,Helvetica,sans-serif; color:#FFFFFF;}
+
+a.type3-link:visited { color: #8DE1FB; outline: medium none; text-decoration: none;}
+
+a.type3-link:hover {text-decoration: underline;}
+
+a.type3-link  a img {border: medium none;}
+
+#type3-special-message h3 { font: normal normal normal 1.3em/150% Arial, Helvetica, sans-serif; text-transform:uppercase; color:#FFFFFF; margin:55px 0 15px 45px; width:259px; text-align:left;}
+
+#type3-special-message h2 {
+    font-family: "Myriad Pro",Arial,Helvetica,sans-serif;
+    font-size: 0.85em;
+    font-weight: normal;
+    position: absolute;
+    margin:0 0 15px 35px;
+	width:259px;
+	right: 0;
+    text-transform: uppercase;
+    top: 15px;
+}
+
+
+#type3-special-message p {
+    margin:0 0 10px 45px;
+	width:235px;    
+    color: #FFFFFF;
+    font-size: 1.15em;
+    line-height: 145%;
+    text-align: left !important;
+}
+
+
+
+/* STYLES FOR EXPLORE CAMPAIGN MODIFICATION */
+#menu { width:640px; }
+#gallery li { width:160px; }
+#gallery li a { margin-left:-13px; padding-top:12px; }
+#type2-special-message { height:372px; background: url("/explore/images/bg-explore-form.jpg") no-repeat 0 top transparent; }
+#type2-special-message h3 { margin:68px 0 6px 50px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; color:#ffffff; text-transform:uppercase; text-shadow:0px 1px 2px #474747; filter:dropshadow(color=#474747, offx=0, offy=1); }
+#type2-special-message h3.text_replacement { width:221px; height:26px; background:url("/explore/images/text-stay-connected-to-va.png") top left no-repeat; text-indent:-9999px; }
+
+.slide div.description { top:208px; }
+.text-control { margin:9px 10px 0 90px; }
+
+#gallery .text-control a { color:#FFFFFF; margin-top:10px; font: 1em Arial, Helvetica, sans-serif; }
+#gallery .text-control a:hover { text-decoration:underline; color:#FFFFFF;  font: 1em Arial, Helvetica, sans-serif; }
+#gallery a, #gallery a:visited { outline: medium none; color:#FFFFFF; text-decoration: none; }
+
+
+/* FORM STYLES FOR EMAIL COLLECTION */
+#type2-special-message #GovDeliveryPlaceHolder p {text-shadow:0 1px 2px #474747;font-size:14px;line-height:18px;width:220px;margin:15px 0 15px 50px;padding:0;}
+form#GovDeliverySignupForm label { display:block; float:left; clear:left; margin:6px 0; }
+form#GovDeliverySignupForm label input,form#GovDeliverySignupForm label textarea,form#GovDeliverySignupForm label select { float:left; width:215px; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock { border:none; width:216px; margin:0 0 0 51px; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock label { display:block; float:left; width:200px; color:#ffffff;font-weight:bold;  font-family:Arial, Helvetica, sans-serif; font-size:14px; text-shadow: 0px 1px 2px #474747; filter: dropshadow(color=#474747, offx=0, offy=1); margin-bottom:5px; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock label.ValidateErrorText { font-weight:normal; font-size:14px; color:yellow; margin:0; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock select { width:215px; margin-bottom:7px; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock input { margin-bottom:7px; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock input#GovDeliveryEmail { width:209px; height:32px; background:url(/explore/images/bg-input-email.png) top left no-repeat; border:0; padding-left:5px; font-size:14px; font-weight:bold; }
+form#GovDeliverySignupForm #GovDeliverySignupBlock input#GovDeliveryZipCode { width:106px; height:24px; background:url(/explore/images/bg-input-zip.png) top left no-repeat; border:0; padding-left:5px; font-size:12px; font-weight:bold; }
+form#GovDeliverySignupForm input[type="submit"] { display:inline; float:left; width:153px; height:37px; margin:15px 0 0 30px; border:0;
+cursor:pointer; font-weight:bold; font-family:Arial, Helvetica, sans-serif; color:#ffffff; text-transform:uppercase; letter-spacing:.05em; font-size:16px;text-shadow:0 -1px #266684; background:url('/explore/images/bg-button-submit.png') #d7221e 0 0 no-repeat; }
+form#GovDeliverySignupForm input[type="submit"]:hover { background-position:0 -39px; text-shadow:0 -1px #6f161a; }
+form#GovDeliverySignupForm input[type="submit"]:active { background-position:0 -39px; text-shadow:0 -1px #6f161a; }
+
