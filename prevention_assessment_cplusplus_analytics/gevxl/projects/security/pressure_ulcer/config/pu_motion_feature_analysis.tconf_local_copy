@@ -1,0 +1,24 @@
+
+vid::source_process::type = openni2
+
+vid::source_process::live = false
+vid::source_process::camera_id = 0
+vid::source_process::oni_filename = d:/pu_motion_analysis.oni
+
+fgbg::fgbg_seg_motion_extraction_proc::enabled = false
+
+#gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::thresh_sal_frac = 0.05
+#gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::thresh_sal = 0.01
+
+gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::thresh_sal_frac = 0.05
+gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::thresh_sal = 0.08
+
+gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::visualize_to_image = true
+gevxl::pressure_ulcer::pu_motion_feature_analysis_proc::viz_video_out_filename = d:/pu_motion_analysis.avi
+
+vid::writer_process::type = openni2
+if(vid::source_process::live)
+  vid::writer_process::enabled = true
+endif
+vid::writer_process::oni_filename = d:/pu_motion_analysis.oni
+vid::writer_process::allow_lossy_compression = true

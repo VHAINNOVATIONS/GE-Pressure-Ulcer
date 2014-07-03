@@ -1,0 +1,18 @@
+
+#to start playing video directly when program starts or not
+skeleton::direct_render = true
+skeleton::chaining_process::direct_render=$(skeleton::direct_render)
+
+
+
+skeleton::person_skeleton_process::enabled=false
+skeleton::person_skeleton_process::visualize=false
+
+
+
+skeleton::person_face_process::enabled=true
+skeleton::person_face_process::visualize=true
+skeleton::person_face_process::near_mode_flag=false
+skeleton::person_face_process::seated_skeleton_flag=true
+skeleton::person_face_process::detection_distance_threshold = 0.3
+skeleton::person_face_process::disguise_flag=false

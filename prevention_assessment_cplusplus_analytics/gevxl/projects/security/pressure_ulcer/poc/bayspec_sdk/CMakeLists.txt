@@ -1,0 +1,10 @@
+#projects/security/pressure_ulcer/poc/bayspec_sdk/CMakeLists.txt 
+
+INCLUDE_DIRECTORIES( ${VXL_OXL_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${VXL_BRL_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${VXL_GEL_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${VXL_RPL_INCLUDE_DIR} )
+
+# sub-folders
+SUBDIRS( exec )
+
