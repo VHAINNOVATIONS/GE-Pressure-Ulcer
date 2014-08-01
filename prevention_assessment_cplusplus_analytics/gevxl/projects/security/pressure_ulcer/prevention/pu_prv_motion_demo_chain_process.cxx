@@ -153,9 +153,9 @@ bool pu_prv_motion_demo_chain_process::step(void)
   }
   rectify_kinect_proc_.step( openni2_proc->cur_xyz_rgb_frame());
 
-
+  const gevxl::vid::frame_tag &tag = frame_tag_proc_.cur_frame_tag();
   //-- Motion Estimate 
-  motion_estimate_proc_.step( openni2_proc->cur_depth_byte_frame() );
+  motion_estimate_proc_.step( tag, openni2_proc->cur_depth_byte_frame() );
 
   //-- Deal with the frame rate issue.
   double frame_rate = 1000/highres_timer_.elapsed();    

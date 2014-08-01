@@ -247,24 +247,32 @@ bool pu_prv_rectify_kinect_process::rectify_height(
   float height_range = max_height_thresh_ - min_height_thresh_;
 
   // Now start rectifying the height
-  const float fNAN = std::numeric_limits<float>::quiet_NaN();
+  //const float fNAN = std::numeric_limits<float>::quiet_NaN();
+	const float fNAN = 0;
   out_xyz_img.fill( 0 ); // always initialize, otherwise, prev result will appear in the "black spots"
   while (xyzrgb_itr != xyzrgb_img.end() ) {
 
     const vgl_point_3d<float>  p( *xyzrgb_itr, *(xyzrgb_itr + 1), *(xyzrgb_itr + 2));
     const vgl_vector_3d<float> v = p - pt0;
     
-    if ( *(xyzrgb_itr+2) > 0 ) {  
+    if( *(xyzrgb_itr+2) > 0 ) {  
       *(out_xyz_itr    ) = dot_product( v, vx );  
       *(out_xyz_itr + 1) = dot_product( v, vy ); 
       *(out_xyz_itr + 2) = dot_product( v, vz ); 
     } 
-    else {
+    else if( *(xyzrgb_itr+2) == 0 ) {
       // kinect did not compute a depth value
       *(out_xyz_itr    ) = dot_product( v, vx );  
       *(out_xyz_itr + 1) = dot_product( v, vy ); 
       *(out_xyz_itr + 2) = fNAN;
     }
+		else {
+			// something strange happens, as the depth value shouldn't be smaller than zero
+			// kinect did not compute a depth value
+      *(out_xyz_itr    ) = dot_product( v, vx );  
+      *(out_xyz_itr + 1) = dot_product( v, vy ); 
+      *(out_xyz_itr + 2) = fNAN;
+		}
 
     //--- debugging
     if (*(out_xyz_itr + 2) > 0.05) {
@@ -414,7 +422,8 @@ inline void depth2rgb( float depth_val, float max_depth, vil_image_view<vxl_byte
   *(itr + 1 ) =  0;
   *(itr + 2 ) =  0;
 
-  const float fNAN = std::numeric_limits<float>::quiet_NaN();
+  //const float fNAN = std::numeric_limits<float>::quiet_NaN();
+	const float fNAN = 0;
   if (fNAN == depth_val) {
     *(itr     ) =  0;
     *(itr + 1 ) =  0;
@@ -454,12 +463,10 @@ inline void depth2rgb( float depth_val, float max_depth, vil_image_view<vxl_byte
     *(itr + 1 ) =  255;
     *(itr + 2 ) =  255; 
   }
-
-
 }
 
 
-vil_image_view<vxl_byte> pu_prv_rectify_kinect_process::xyz2rgb( const vil_image_view<float> & xyz )
+const vil_image_view<vxl_byte> &pu_prv_rectify_kinect_process::xyz2rgb( const vil_image_view<float> & xyz ) const
 {
   assert( xyz.size() > 0 ); // this could happen in the first few frames when kinect is not initalized
   assert( xyz.nplanes() == 3 ); // x,y,z values in 3 planes
@@ -477,8 +484,6 @@ vil_image_view<vxl_byte> pu_prv_rectify_kinect_process::xyz2rgb( const vil_image
     xyz_itr += 3; 
   }
 
-
-  // debugging
   // -- draw out the point chosen as base point
   const int ni = xyz.ni();
   const int nj = xyz.nj();

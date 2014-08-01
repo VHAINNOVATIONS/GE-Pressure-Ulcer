@@ -18,6 +18,7 @@
 #include <sstream> // for converting float to string
 
 #include <img/image_as_string.h>
+#include <vid/frame_tag.h>
 
 using namespace gevxl;
 using namespace gevxl::util::time;
@@ -111,6 +112,12 @@ bool pu_prevention_chaining_process::configure(util::config_file &config)
 		return false;
 	}
 
+  // -- Configure the turning_protocol_proc_
+  if( !turning_protocol_proc_.configure(config) ) {
+    vcl_cerr << "pu_prevention_chaining_process::configure, Error configuring turning_protocol_proc_." << vcl_endl;
+		return false;
+  }
+
 	// cur output frame type for visualization
   cur_frame_output_type_ = "depth";
   config.get_string(name()+"::cur_frame_output_type", cur_frame_output_type_);
@@ -148,6 +155,12 @@ bool pu_prevention_chaining_process::initialize(void)
 		vcl_cerr << "pu_prevention_chaining_process::initialize, Error initializing rectify_kinect_proc_." << vcl_endl;
 		return false;
 	}
+
+  // turning protocol process's initialization method
+  if( !turning_protocol_proc_.initialize() ) {
+    vcl_cerr << "pu_prevention_chaining_process::initialize, Error initializing turning_protocol_proc_." << vcl_endl;
+		return false;
+  }
 
 	if( !videoarchive_writer_proc_.initialize() ) {
 		vcl_cerr << "pu_prevention_chaining_process::initialize, Error initializing videoarchive_writer_proc_." << vcl_endl;
@@ -259,6 +272,8 @@ bool pu_prevention_chaining_process::step(void)
 		return false;
 	}
 
+  const gevxl::vid::frame_tag &tag = frame_tag_proc_.cur_frame_tag();
+
 	// --- Rectify
 	const vid::openni2_frame_process *openni2_proc = dynamic_cast<const vid::openni2_frame_process *>(source_proc_.get_frame_process());
 	if( !openni2_proc ) {
@@ -278,12 +293,26 @@ bool pu_prevention_chaining_process::step(void)
 		return false;
 	}
 
-	//-- Motion Estimate 
+	// motion estimate process
 	//motion_estimate_proc_.step( openni2_proc->cur_depth_byte_frame() );
-	if( !motion_estimate_proc_.step( rectify_kinect_proc_.depth_filtered_frame() ) ) {
+	if( !motion_estimate_proc_.step( tag, rectify_kinect_proc_.depth_filtered_frame() ) ) {
 		vcl_cerr << "pu_prevention_chaining_process::step(), Error executing motion_estimate_proc_.step()." << vcl_endl;
 		return false;
 	}
+
+  // patient turning protocol monitoring process
+  const vil_image_view<vxl_uint_16> &raw_depth_frame = openni2_proc->cur_depth_frame();
+  const vil_image_view<vxl_byte> &filtered_depth_frame = rectify_kinect_proc_.depth_filtered_frame();
+  const vil_image_view<float> &rectified_xyz_frame = rectify_kinect_proc_.rectified_xyz_frame();
+  
+  vgl_point_3d<float>  origin;
+  vgl_vector_3d<float> vx, vy, vz;
+  rectify_kinect_proc_.get_transformed_coordinate_system(origin, vx, vy, vz);
+
+  if( !turning_protocol_proc_.step(tag, raw_depth_frame, filtered_depth_frame, rectified_xyz_frame, origin, vx, vy, vz) ) {
+    vcl_cerr << "pu_prevention_chaining_process::step(), Error executing turning_protocol_proc_.step()." << vcl_endl;
+		return false;
+  }
 
 	//-- Deal with the frame rate issue.
 	double frame_rate = 1000/highres_timer_.elapsed();    
@@ -338,6 +367,9 @@ const vil_image_view<vxl_byte> &pu_prevention_chaining_process::cur_frame(void) 
   else if(cur_frame_output_type_ == "motion") {
     return motion_estimate_proc_.get_visualization_image();
   }
+  else if(cur_frame_output_type_ == "rectified_xyz") {    
+    return rectify_kinect_proc_.xyz2rgb(rectify_kinect_proc_.rectified_xyz_frame());    
+  }
   else if(cur_frame_output_type_ == "height_filtered") {
     return rectify_kinect_proc_.height_filtered_frame();
   }
@@ -349,6 +381,8 @@ const vil_image_view<vxl_byte> &pu_prevention_chaining_process::cur_frame(void) 
 void pu_prevention_chaining_process::set_visualizer( gevxl::img::visualizer_2d *viz)
 {
 	viz_ = viz;
+
+  turning_protocol_proc_.set_visualizer(viz);
 }
 
 void pu_prevention_chaining_process::visualize(void)
@@ -363,12 +397,11 @@ void pu_prevention_chaining_process::visualize(void)
 			
 			viz_->set_image( viz_img );
 
-			// Show motion magnitude information
-			std::ostringstream buf;
-			buf << motion_estimate_proc_.get_scalar_motion_magnitude();
-			viz_->add_text( 640, 8, buf.str() );
-
-      viz_->flush();
+			// visualize the overlay content
+			turning_protocol_proc_.visualize_overlay();
+      
+			// flush out the content
+			viz_->flush();
 		}
 	}
 }

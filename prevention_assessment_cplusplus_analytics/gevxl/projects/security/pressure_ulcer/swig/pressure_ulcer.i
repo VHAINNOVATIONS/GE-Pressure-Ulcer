@@ -1,7 +1,7 @@
 /* File : pressure_ulcer.i */
-%module(package="gevxl.pressure_ulcer",directors="1") pressure_ulcer
-%feature("director") pu_prevention_database_writer;
-/* %module(package="gevxl.pressure_ulcer") pressure_ulcer */
+/* %module(package="gevxl.pressure_ulcer",directors="1") pressure_ulcer */
+/* %feature("director") pu_prevention_database_writer; */
+%module(package="gevxl.pressure_ulcer") pressure_ulcer
 %{
 #include <vbl/vbl_shared_pointer.h>
 #include <vcl_compiler.h>
@@ -15,7 +15,7 @@
 #include <pressure_ulcer/prevention/pu_prv_rectify_kinect_process.h>
 #include <pressure_ulcer/prevention/pu_prv_motion_estimate_process.h>
 #include <pressure_ulcer/prevention/pu_prevention_chaining_process.h>
-#include <pressure_ulcer/prevention/pu_prevention_database_writer.h>
+/* #include <pressure_ulcer/prevention/pu_prevention_database_writer.h> */
 #include <pressure_ulcer/assessment/pu_assessment_system_proc.h>
 #include <pressure_ulcer/assessment/biochemical/biochemical_sensor.h>
 
@@ -44,6 +44,6 @@ namespace std {
 %include <pressure_ulcer/prevention/pu_prv_rectify_kinect_process.h>
 %include <pressure_ulcer/prevention/pu_prv_motion_estimate_process.h>
 %include <pressure_ulcer/prevention/pu_prevention_chaining_process.h>
-%include <pressure_ulcer/prevention/pu_prevention_database_writer.h>
+/* %include <pressure_ulcer/prevention/pu_prevention_database_writer.h> */
 %include <pressure_ulcer/assessment/pu_assessment_system_proc.h>
 %include <pressure_ulcer/assessment/biochemical/biochemical_sensor.h>

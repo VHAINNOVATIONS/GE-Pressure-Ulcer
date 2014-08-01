@@ -3,8 +3,8 @@
 // This software is intellectual property of General Electric Co.
 // and may not be copied or redistributed without express written consent.
 
-#ifndef gevxl_pressure_ulcer_pu_prevention_chaining_process_h
-#define gevxl_pressure_ulcer_pu_prevention_chaining_process_h
+#ifndef gevxl_pressure_ulcer_pu_prevention_pose_estimate_chaining_process_h
+#define gevxl_pressure_ulcer_pu_prevention_pose_estimate_chaining_process_h
 
 #include <vcl_vector.h>
 #include <vil/vil_image_view.h>
@@ -23,29 +23,22 @@
 #include <vid/code_stamp_frame_tag_process.h>
 #include <vid/io/ffmpeg_writer.h>
 
-#include <pressure_ulcer/prevention/pu_prevention_videoarchive_frame_process.h>
-#include <pressure_ulcer/prevention/pu_prevention_videoarchive_writer_process.h>
-
 #include <pressure_ulcer/prevention/pu_prv_rectify_kinect_process.h>
-#include <pressure_ulcer/prevention/pu_prv_motion_estimate_process.h>
-#include <pressure_ulcer/prevention/pu_prevention_turning_protocol_process.h>
-
-#include <pressure_ulcer/prevention/pu_prevention_database_writer.h>
 
 namespace gevxl {
 	namespace pressure_ulcer {
 		namespace prevention {
 
-		class pu_prevention_chaining_process : public gevxl::framework::process,
-																					 public gevxl::util::on_off_mixin
+		class pu_prevention_pose_estimate_chaining_process : public gevxl::framework::process,
+																												 public gevxl::util::on_off_mixin
 		{
 		public:
 
 			// constructor
-			pu_prevention_chaining_process(char const *name="gevxl::pressure_ulcer::prevention::pu_prevention_chaining_process");
+			pu_prevention_pose_estimate_chaining_process(char const *name="gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_chaining_process");
 
 			// destructor
-			virtual ~pu_prevention_chaining_process(void); 
+			virtual ~pu_prevention_pose_estimate_chaining_process(void); 
 
 			// configure this proc
 			virtual bool configure(gevxl::util::config_file &config);
@@ -77,39 +70,7 @@ namespace gevxl {
 
       // get the kinect depth rectification process
       gevxl::pressure_ulcer::prevention::pu_prv_rectify_kinect_process *get_rectify_kinect_process(void) { return &rectify_kinect_proc_; }
-
-      // get the motion estimate process
-      gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process *get_motion_estimate_process(void) { return &motion_estimate_proc_; }
-
-      // get the patient turning protocol monitoring process
-      gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process *get_turning_protocol_process(void) { return &turning_protocol_proc_; }
-
-      // Python interface methods
-
-      // start and stop recording
-      bool start_recording(const vcl_string folder);
-      bool stop_recording(void);
-
-      // set the database writer
-      void set_database_writer(gevxl::pressure_ulcer::prevention::pu_prevention_database_writer *writer)
-      {
-        database_writer_ = writer;
-      }
-
-      // set the pose estimate label based on the user input
-			void set_pose_estimate_label(const vcl_string &label)
-			{
-				turning_protocol_proc_.get_pose_estimate_process_sptr()->set_pose_sample_label(label);
-			}
-
-			// extract all recently detected turning events from the list
-			vcl_vector<vcl_string> extract_turning_events(void)
-			{
-				vcl_vector<vcl_string> event_strs;
-				turning_protocol_proc_.extract_turning_events(event_strs);
-				return event_strs;
-			}
-
+      
 		private:
 						
       // ensure the avi files have been openned for the ffmpeg writing out
@@ -162,33 +123,18 @@ namespace gevxl {
 			// input source
 			gevxl::vid::generic_frame_process<vxl_byte> source_proc_;
 
-			// pu_prevention_videoarchive_frame_process
-			gevxl::pressure_ulcer::prevention::pu_prevention_videoarchive_frame_process videoarchive_frame_proc_;
-
-			// pu_prevention_videoarchive_writer_process
-			gevxl::pressure_ulcer::prevention::pu_prevention_videoarchive_writer_process videoarchive_writer_proc_;
-
 			// frame tag process
 			gevxl::vid::code_stamp_frame_tag_process frame_tag_proc_;
 
 			// rectify Kinect process
       pu_prv_rectify_kinect_process rectify_kinect_proc_;
 
-      // motion estimate process
-      pu_prv_motion_estimate_process motion_estimate_proc_;
-
-      // patient turning protocol monitoring process
-      pu_prevention_turning_protocol_process turning_protocol_proc_;
-
-      // the database writer
-      gevxl::pressure_ulcer::prevention::pu_prevention_database_writer *database_writer_;
-
-			// debugging verbose_ level
+      // debugging verbose_ level
 			int verbose_;
 
-		};  // end of class pu_prevention_chaining_process
+		};  // end of class pu_prevention_pose_estimate_chaining_process
 
-		typedef vbl_shared_pointer<pu_prevention_chaining_process> pu_prevention_chaining_process_sptr;
+		typedef vbl_shared_pointer<pu_prevention_pose_estimate_chaining_process> pu_prevention_pose_estimate_chaining_process_sptr;
 
 		} // end of prevention namespace
 	} // end of pressure_ulcer namespace

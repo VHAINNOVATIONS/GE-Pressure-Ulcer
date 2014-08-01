@@ -60,7 +60,7 @@ public:
   const vil_image_view<vxl_byte> &depth_filtered_frame() const { return depth_filtered_img_; }
 
   //: convert an xyz to an rgb image
-  vil_image_view<vxl_byte> xyz2rgb( const vil_image_view<float> & xyz_img );
+  const vil_image_view<vxl_byte> &xyz2rgb( const vil_image_view<float> & xyz_img ) const;
 
   //: visualization method
   void visualize( int start_x, int start_y, gevxl::img::visualizer_2d *viz);
