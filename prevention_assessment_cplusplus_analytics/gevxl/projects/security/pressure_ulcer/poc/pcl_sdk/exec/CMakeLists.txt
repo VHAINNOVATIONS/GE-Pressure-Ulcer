@@ -48,6 +48,11 @@ IF (PCL_FOUND)
     ADD_EXECUTABLE( pu_pcl_sdk_exp_icp pu_pcl_sdk_exp_icp.cxx )
     TARGET_LINK_LIBRARIES( pu_pcl_sdk_exp_icp ${PCL_LIBRARIES}  vid )
 
+    ADD_EXECUTABLE( pu_pcl_sdk_darpa_pc_fusion pu_pcl_sdk_darpa_pc_fusion.cxx )
+    TARGET_LINK_LIBRARIES( pu_pcl_sdk_darpa_pc_fusion ${PCL_LIBRARIES} vil vcl util vid img )
+
+    ADD_EXECUTABLE( pu_pcl_sdk_intel_xyzrgb_2_pcd pu_pcl_sdk_intel_xyzrgb_2_pcd.cxx )
+    TARGET_LINK_LIBRARIES( pu_pcl_sdk_intel_xyzrgb_2_pcd ${PCL_LIBRARIES} vil vcl util vid img )
     
 ENDIF (PCL_FOUND)
 

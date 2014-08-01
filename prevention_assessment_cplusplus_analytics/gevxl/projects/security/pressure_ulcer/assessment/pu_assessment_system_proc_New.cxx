@@ -5,7 +5,7 @@
 
 /// \file
 /// \author Ting Yu
-/// \date 3/09/2014
+/// \date 3/09/2013
 /// \par Modifications:
 
 #include "pu_assessment_system_proc.h"
@@ -385,7 +385,16 @@ bool pu_assessment_system_proc::step(void)
 	//	return false;
 	//}
 
-	// deal with the frame rate issue.
+	// debug
+	//if(frame_nr_ == 100) {
+	//	gevxl::vid::pxc_frame_process *pxc_source = dynamic_cast<gevxl::vid::pxc_frame_process *>(rgbd_cam_source_proc_.get_frame_process());
+	//	pxc_source->set_save_out_flag(true);
+
+	//	gevxl::vid::micro_epsilon_socket_frame_process *thermal_source = dynamic_cast<gevxl::vid::micro_epsilon_socket_frame_process *>(thermal_cam_source_proc_.get_frame_process());
+	//	thermal_source->set_save_out_flag(true);
+	//}
+
+  // deal with the frame rate issue.
 	double frame_rate = 1000/highres_timer_.elapsed();	
 	highres_timer_.reset();
 

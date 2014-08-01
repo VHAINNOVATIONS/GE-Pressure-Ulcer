@@ -40,7 +40,7 @@ pu_prevention_chaining_process_filename = Peter_01_self_turn
 # pu_prevention_chaining_process_filename = lossless_jpeg_vs_zip_compression
 
 # prefixed params
-vid::pu_prevention_source_process::live = true
+vid::pu_prevention_source_process::live = false
 vid::pu_prevention_source_process::type = openni2
 vid::pu_prevention_source_process::camera_id = 0
 vid::pu_prevention_source_process::oni_filename = $(pu_prevention_chaining_process_filepath)/$(pu_prevention_chaining_process_filename).oni
@@ -142,7 +142,7 @@ gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::mh_scalar_mag
 #-------------------------------------------------------------------------
 # Parameters for the turning protocol monitoring
 #-------------------------------------------------------------------------
-gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::enabled = false
+gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::enabled = true
 gevxl::pressure_ulcer::prevention::pu_prevention_person_detect_process::enabled = true
 gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::enabled = true
 

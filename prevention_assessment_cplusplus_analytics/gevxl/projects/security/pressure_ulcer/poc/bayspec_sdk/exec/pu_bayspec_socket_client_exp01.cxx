@@ -20,7 +20,7 @@ class command_message
 {
 public:
   enum { header_length = 4 };
-  enum { max_body_length = 512 };
+  enum { max_body_length = 1024 };
 
   command_message()
     : body_length_(0)

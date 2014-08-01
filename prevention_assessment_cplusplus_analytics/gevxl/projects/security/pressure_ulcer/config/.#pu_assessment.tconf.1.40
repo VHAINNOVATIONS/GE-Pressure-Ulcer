@@ -1,14 +1,14 @@
 # computer dependent configuration
 
 # Ting's Z400 Desktop
-gevxl_src_path = E:/projects_cpp/gevxl
-mmpspupcva_src_path = E:/projects_cpp/mmpspupcva
-testing_data_path = D:/data/pressure_ulcer
+#gevxl_src_path = E:/projects_cpp/gevxl
+#mmpspupcva_src_path = E:/projects_cpp/mmpspupcva
+#testing_data_path = D:/data/pressure_ulcer
 
 # Ting's Laptop
-#gevxl_src_path = D:/yuting/src/gevxl
-#mmpspupcva_src_path = D:/yuting/src/mmpspupcva
-#testing_data_path = D:/yuting/data/pressure_ulcer
+gevxl_src_path = D:/yuting/src/gevxl
+mmpspupcva_src_path = D:/yuting/src/mmpspupcva
+testing_data_path = D:/yuting/data/pressure_ulcer
 
 ####################################################################
 # params for pcsdk camera
@@ -90,9 +90,6 @@ gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::thermal_analysis_v
 gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::thermal_analysis_viz_offset_j = 360
 
 ####################################################################
-# tissue analysis enable/disable
-gevxl::pressure_ulcer::assessment::pu_tissue_analysis_proc::enabled = true
-
 # for 3D depth camera, output type = "rgb" and "depth" and "rgb_in_depth_view"
 gevxl::pressure_ulcer::assessment::pu_tissue_analysis_proc::viz_downsampling_factor = 2
 
@@ -129,9 +126,6 @@ gevxl::pressure_ulcer::assessment::pu_tissue_analysis_proc::rgb_in_depth_dump_fi
 
 ####################################################################
 # thermal analysis configuration
-# thermal analysis enable/disable
-gevxl::pressure_ulcer::pu_thermal_analysis_proc::enabled = true
-
 gevxl::pressure_ulcer::pu_thermal_analysis_proc::skin_temperature_lower_range_in_C = 20.0
 gevxl::pressure_ulcer::pu_thermal_analysis_proc::skin_temperature_higher_range_in_C = 45.0
 
@@ -147,11 +141,6 @@ gevxl::pressure_ulcer::pu_thermal_analysis_proc::num_of_deviations_as_outlier_in
 gevxl::pressure_ulcer::pu_thermal_analysis_proc::thermal_camera_intrinsic_vector = [705.98246 0 191 0 710.09162 144 0 0 1]
 gevxl::pressure_ulcer::pu_thermal_analysis_proc::thermal_camera_rotation_vector = [0.9994 -0.0258 -0.0213 0.0255 0.9996 -0.0125 0.0216 0.0120 0.9997]
 gevxl::pressure_ulcer::pu_thermal_analysis_proc::thermal_camera_translation_vector = [-45.3389 -27.3844 136.9797]
-
-####################################################################
-# 3d analysis configuration
-# 3d analysis enable/disable
-gevxl::pressure_ulcer::pu_3d_recon_proc::enabled = false
 
 ####################################################################
 # database access configuration

@@ -82,6 +82,10 @@ bool pu_tissue_analysis_proc::configure(util::config_file &config)
 {
 	config_ = config;
 
+	bool enabled = false;
+	config_.get_bool(name()+"::enabled", enabled);
+	enable(enabled);
+
   // visualization downsampling factor for the rgb image
 	viz_downsampling_factor_ = 2;
 	config_.get_integer(name()+"::viz_downsampling_factor", viz_downsampling_factor_);
@@ -181,12 +185,14 @@ bool pu_tissue_analysis_proc::configure(util::config_file &config)
 
 bool pu_tissue_analysis_proc::initialize(void)
 {
+	if(is_enabled() == false) return true;
+
   return true;
 }
 
 void pu_tissue_analysis_proc::uninitialize(void)
 {
-  
+	if(is_enabled() == false) return;		
 }
 
 bool pu_tissue_analysis_proc::step(vil_image_view<vxl_byte> img)
@@ -204,6 +210,8 @@ bool pu_tissue_analysis_proc::step(vil_image_view<vxl_byte> img)
 
 bool pu_tissue_analysis_proc::step(void)
 {
+	if(is_enabled() == false) return true;
+
   vil_image_view<vxl_byte> img = source_proc_->cur_frame();
 	
 	const gevxl::vid::pxc_frame_process *pxc_source = dynamic_cast<const gevxl::vid::pxc_frame_process *>(source_proc_->get_frame_process());
@@ -272,6 +280,8 @@ void pu_tissue_analysis_proc::downsample_image_view(const vil_image_view<vxl_byt
 
 void pu_tissue_analysis_proc::start_wound_segmentation(void)
 {
+	if(is_enabled() == false) return;
+
 	if(wound_segment_started_ == false) {
 		
 		wound_segment_rgb_frame_.deep_copy(curr_rgb_frame_);
@@ -371,6 +381,8 @@ void pu_tissue_analysis_proc::cancel_wound_segmentation(void)
 
 void pu_tissue_analysis_proc::end_wound_segmentation(void)
 {
+	if(is_enabled() == false) return;
+
 	// the wound segmentation is finished, now the workflow comes to the tissue segmentation stage by default.
 	tissue_segmentation_rgb_frame_.deep_copy(wound_segment_result_rgb_frame_);
 	tissue_segmentation_result_rgb_frame_.deep_copy(tissue_segmentation_rgb_frame_);
@@ -453,6 +465,8 @@ void pu_tissue_analysis_proc::generate_wound_segment_mask(void)
 
 void pu_tissue_analysis_proc::start_tissue_segmentation(void)
 {
+	if(is_enabled() == false) return;
+
 	tissue_segmentation_bgr_frame_.deep_copy(tissue_segmentation_rgb_frame_);
 
 	// convert to the opencv cv::Mat for mean-shift segmentation.
@@ -602,6 +616,8 @@ void pu_tissue_analysis_proc::start_tissue_segmentation(void)
 
 bool pu_tissue_analysis_proc::is_tissue_segmentation_labeling_mouse_clicking_valid(int x, int y)
 {
+	if(is_enabled() == false) return true;
+
 	x = x*viz_downsampling_factor_;
 	y = y*viz_downsampling_factor_;
 	
@@ -642,6 +658,8 @@ bool pu_tissue_analysis_proc::is_tissue_segmentation_labeling_mouse_clicking_val
 
 void pu_tissue_analysis_proc::set_tissue_segmentation_label(int x, int y, vcl_string tissue_type)
 {
+	if(is_enabled() == false) return;
+
 	int tissue_type_label = tissue_types_2_labels_map_[tissue_type];
 
 	int i = 0, j = 0;
@@ -688,6 +706,8 @@ void pu_tissue_analysis_proc::set_tissue_segmentation_label(int x, int y, vcl_st
 
 bool pu_tissue_analysis_proc::save_to_file_tissue_type_histogram_model(vcl_ofstream &ofs)
 {
+	if(is_enabled() == false) return true;
+
 	vcl_map<int, gevxl::img::histogram_fast_rgb<HISTOGRAM_FAST_RGB_N> >::iterator iter = tissue_types_color_hist_.begin();
 	
 	for(; iter != tissue_types_color_hist_.end(); iter++) {
@@ -703,6 +723,8 @@ bool pu_tissue_analysis_proc::save_to_file_tissue_type_histogram_model(vcl_ofstr
 
 bool pu_tissue_analysis_proc::load_from_file_tissue_type_histogram_model(vcl_ifstream &ifs)
 {
+	if(is_enabled() == false) return true;
+
 	vcl_string description;
 	int tissue_type = 0;
 
@@ -725,6 +747,8 @@ void pu_tissue_analysis_proc::classify_wound_segment_into_tissue_types(vil_image
 																																				double &eschar_percentage,
 																																				double &bone_percentage)
 {
+	if(is_enabled() == false) return;
+
 	// create a normalized tissue type color histogram model for each tissue type.
 	vcl_map<int, gevxl::img::histogram_fast_rgb<HISTOGRAM_FAST_RGB_N> > tissue_types_color_hist_normalized;
 	
@@ -880,11 +904,15 @@ void pu_tissue_analysis_proc::classify_wound_segment_into_tissue_types(vil_image
 
 void pu_tissue_analysis_proc::end_tissue_segmentation(void)
 {
+	if(is_enabled() == false) return;
+
 	// to be continued
 }
 
 void pu_tissue_analysis_proc::start_wound_3D_length_width_depth_measurement(void)
 {
+	if(is_enabled() == false) return;
+
 	// the wound segmentation is finished, it can also enable the wound 3D measurement stage.
 	if(wound_3d_measurement_started_ == false) return;
 
@@ -904,6 +932,10 @@ void pu_tissue_analysis_proc::start_wound_3D_length_width_depth_measurement(void
 			// wound segmentation result is ready, and we can use it to blacken all the non-wound pixels in the depth view.
 			xx = depth_to_rgb_coordinate_map(i, j, 0);
 			yy = depth_to_rgb_coordinate_map(i, j, 1);
+			if(xx < 0 || xx >= wound_3d_measurement_rgb_frame_.ni() || yy < 0 || yy >= wound_3d_measurement_rgb_frame_.nj()) {
+				continue;
+			}
+
 			if( wound_3d_measurement_rgb_frame_(xx, yy, 0) == 0 &&
 					wound_3d_measurement_rgb_frame_(xx, yy, 1) == 0 &&
 					wound_3d_measurement_rgb_frame_(xx, yy, 2) == 0 ) {
@@ -1153,6 +1185,8 @@ void pu_tissue_analysis_proc::start_wound_3D_length_width_depth_measurement(void
 
 void pu_tissue_analysis_proc::end_wound_and_tissue_analysis_for_current_frame(void)
 {
+	if(is_enabled() == false) return;
+
 	// clear tissue segmentation stuff
 	tissue_segmentation_started_ = false;
 	tissue_segmentation_result_label_coordinates_.clear();
@@ -1179,12 +1213,14 @@ void pu_tissue_analysis_proc::end_wound_and_tissue_analysis_for_current_frame(vo
 
 void pu_tissue_analysis_proc::visualize(void)
 {
-	
+	if(is_enabled() == false) return;
 }
 
 // visualizing to the viz_canvas_frame
 void pu_tissue_analysis_proc::visualize_canvas(vil_image_view<vxl_byte> &viz_canvas_frame)
 {
+	if(is_enabled() == false) return;
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// layout the different frames into the viz_canvas_frame
 	int i_offset = 0, j_offset = 0;
@@ -1314,6 +1350,10 @@ void pu_tissue_analysis_proc::visualize_canvas(vil_image_view<vxl_byte> &viz_can
 				// wound segmentation result is ready, and we can use it to blacken all the non-wound pixels in the depth view.
 				xx = depth_to_rgb_coordinate_map(i, j, 0);
 				yy = depth_to_rgb_coordinate_map(i, j, 1);
+				if(xx < 0 || xx >= wound_3d_measurement_rgb_frame_.ni() || yy < 0 || yy >= wound_3d_measurement_rgb_frame_.nj()) {
+					continue;
+				}
+
 				if( wound_3d_measurement_rgb_frame_(xx, yy, 0) == 0 &&
 					wound_3d_measurement_rgb_frame_(xx, yy, 1) == 0 &&
 					wound_3d_measurement_rgb_frame_(xx, yy, 2) == 0 ) {
@@ -1387,6 +1427,8 @@ void pu_tissue_analysis_proc::visualize_canvas(vil_image_view<vxl_byte> &viz_can
 // visualizing to the overlay visualizer
 void pu_tissue_analysis_proc::visualize_overlay()
 {
+	if(is_enabled() == false) return;
+
 	if(viz_) {
 		if(viz_->is_initialized()) { 
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

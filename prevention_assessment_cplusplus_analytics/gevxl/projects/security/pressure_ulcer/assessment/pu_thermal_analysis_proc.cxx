@@ -79,7 +79,11 @@ bool pu_thermal_analysis_proc::configure(util::config_file &config)
 {
 	config_ = config;
 
-  // ---- source configuration 
+	bool enabled = false;
+	config_.get_bool(name()+"::enabled", enabled);
+	enable(enabled);
+
+  // parameter configuration
 	skin_temperature_lower_range_in_C_ = 30.0;
 	config_.get_float(name()+"::skin_temperature_lower_range_in_C", skin_temperature_lower_range_in_C_);
 
@@ -165,12 +169,14 @@ bool pu_thermal_analysis_proc::configure(util::config_file &config)
 
 bool pu_thermal_analysis_proc::initialize(void)
 {
+	if(is_enabled() == false) return true;
+
  	return true;
 }
 
 void pu_thermal_analysis_proc::uninitialize(void)
 {
-
+	if(is_enabled() == false) return;
 }
 
 void pu_thermal_analysis_proc::set_point_cloud_xyzrgb_frame(const vil_image_view<float> &xyz_rgb_frame)
@@ -180,6 +186,8 @@ void pu_thermal_analysis_proc::set_point_cloud_xyzrgb_frame(const vil_image_view
 
 bool pu_thermal_analysis_proc::step(void)
 {
+	if(is_enabled() == false) return true;
+
   const gevxl::vid::micro_epsilon_socket_frame_process *thermal_source = dynamic_cast<const gevxl::vid::micro_epsilon_socket_frame_process *>(source_proc_->get_frame_process());
 
 	// extract the current thermal byte frame
@@ -245,7 +253,7 @@ bool pu_thermal_analysis_proc::step(void)
 
 bool pu_thermal_analysis_proc::step(const vil_image_view<vxl_byte> &thermal_byte_img)
 {
-  unsigned int i, j;
+	unsigned int i, j;
   const unsigned int ni = thermal_byte_img.ni();
   const unsigned int nj = thermal_byte_img.nj();
 
@@ -311,7 +319,7 @@ void pu_thermal_analysis_proc::set_viz_offset(int viz_offset_i, int viz_offset_j
 
 void pu_thermal_analysis_proc::visualize(void)
 {	
-
+	if(is_enabled() == false) return;
 }
 
 void pu_thermal_analysis_proc::thermal_texture_mapping_to_depth_view(void)
@@ -720,6 +728,8 @@ void pu_thermal_analysis_proc::set_gui_configurable_params(float skin_temperatur
 // visualizing to the viz_canvas_frame
 void pu_thermal_analysis_proc::visualize_canvas(vil_image_view<vxl_byte> &viz_canvas_frame)
 {
+	if(is_enabled() == false) return;
+
 	if(thermal_frames_in_depth_view_) {
 		
 		for(unsigned j = 0; j < thermal_byte_frame_in_depth_view_.nj(); j++) {
@@ -782,6 +792,8 @@ void pu_thermal_analysis_proc::visualize_canvas(vil_image_view<vxl_byte> &viz_ca
 // visualizing to the overlay visualizer
 void pu_thermal_analysis_proc::visualize_overlay()
 {
+	if(is_enabled() == false) return;
+
 	if(viz_) {
 		if(viz_->is_initialized()) { 
 

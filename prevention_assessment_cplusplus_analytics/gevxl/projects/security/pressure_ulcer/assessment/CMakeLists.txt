@@ -10,6 +10,9 @@ INCLUDE_DIRECTORIES( ${gevxlnew_BINARY_DIR}/share )
 
 #####################################################
 SET( pu_assessment_proc_sources
+
+   # the 3D reconstruction process from point cloud data
+   pu_3d_recon_proc.h		   	pu_3d_recon_proc.cxx
    
    # the thermal imagery analysis process
    pu_thermal_analysis_proc.h          	pu_thermal_analysis_proc.cxx
