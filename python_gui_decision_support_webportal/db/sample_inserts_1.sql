@@ -11,17 +11,18 @@ insert into `va_pupc`.`system_configuration` (`parameter_name`, `parameter_value
 insert into `va_pupc`.`system_configuration` (`parameter_name`, `parameter_value`) VALUES ('THERMAL_CAMERA_CLIENT_PATH','C:/pressure_ulcer/resource/thermal_cam_capture/Start IPC2/Release/thermal_cam_capture.exe');
 insert into `va_pupc`.`system_configuration` (`parameter_name`, `parameter_value`) VALUES ('HYPERSPECTRAL_CAMERA_SERVER_PATH','C:/pressure_ulcer/resource/hyperspectral_cam_capture/program/BaySpecCameraServer/Release/BaySpecCameraServer.exe');
 insert into `va_pupc`.`system_configuration` (`parameter_name`, `parameter_value`) VALUES ('VISUAL_RECORD_TIME','5');
+insert into `va_pupc`.`system_configuration` (`parameter_name`, `parameter_value`) VALUES ('PREVENTION_FILE_SIZE_GB','500');
 
-INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`) VALUES ('VA1234567890', 'Barry', 'male', '/tmp/barry', '1');
-INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`) VALUES ('VA1111111111', 'Ting', 'male','/tmp/ting', '2');
-INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`) VALUES ('VA2222222222', 'Vrinda', 'female', '/tmp/vrinda', '3');
+INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`, `age`, `medical_history`) VALUES ('VA1234567890', 'Barry', 'male', '/tmp/barry', '1', 59, 'N/A');
+INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`, `age`, `medical_history`) VALUES ('VA1111111111', 'Ting', 'male','/tmp/ting', '2', 35, 'N/A');
+INSERT INTO `va_pupc`.`patient_identification` (`va_patient_id`, `patient_name`, `patient_gender`, `data_files_base_directory`, `camera_id`, `age`, `medical_history`) VALUES ('VA2222222222', 'Vrinda', 'female', '/tmp/vrinda', '3', 33, 'N/A');
 
 INSERT INTO `va_pupc`.`braden_scores` (`patient_id`, `braden_scoring_date`, `sensory_perception_score`, `moisture_score`, `activity_score`, `mobility_score`, `nutrition_score`, `friction_shear_score`) VALUES ('1', '2014-03-14 09:24:00', '1', '2', '3', '4', '5', '6');
 INSERT INTO `va_pupc`.`braden_scores` (`patient_id`, `braden_scoring_date`, `sensory_perception_score`, `moisture_score`, `activity_score`, `mobility_score`, `nutrition_score`, `friction_shear_score`) VALUES ('1', '2014-03-07 10:12:00', '6', '5', '4', '3', '2', '1');
 
-INSERT INTO `va_pupc`.`patient_admission` (`patient_id`, `admission_date`, `admission_note`, `factors_impairing_healing`) VALUES ('1', '2014-03-03 07:00', 'LOI: 74 year old white male who is a T7 myelopathy ASIA B secondary to thoracic spinal ostemyelitis.  Transferred from MCG to SCIU for continued rehab on 8/2/13. Last seen with Plastic Surgery team o 8/28/13 at which time wound was debrided gently with currette and pressure dressing applied. Per Plastic Surgery recs. treatment for sacral wound was Santyl in am and clorpactin moist dressing in evening.', 'Diabetes. SCI. AKI');
+INSERT INTO `va_pupc`.`patient_admission` (`patient_id`, `admission_date`, `admission_note`, `factors_impairing_healing`, `patient_group`) VALUES ('1', '2014-03-03 07:00', 'LOI: 74 year old white male who is a T7 myelopathy ASIA B secondary to thoracic spinal ostemyelitis.  Transferred from MCG to SCIU for continued rehab on 8/2/13. Last seen with Plastic Surgery team o 8/28/13 at which time wound was debrided gently with currette and pressure dressing applied. Per Plastic Surgery recs. treatment for sacral wound was Santyl in am and clorpactin moist dressing in evening.', 'Diabetes. SCI. AKI', 'In-Patient');
 
-INSERT INTO `va_pupc`.`patient_assessment` (`patient_id`, `assessment_date`, `assessment_note`) VALUES ('1', '2014-03-03 09:53', 'LOI: 74 year old white male who is a T7 myelopathy ASIA B secondary to thoracic spinal ostemyelitis.');
+INSERT INTO `va_pupc`.`patient_assessment` (`patient_id`, `assessment_date`, `assessment_note`, `education_notes`, `education_understanding`, `education_evidenced_by`) VALUES ('1', '2014-03-03 09:53', 'LOI: 74 year old white male who is a T7 myelopathy ASIA B secondary to thoracic spinal ostemyelitis.', 'Wound must be re-dressed daily', 'Medium', 'Crystal Glover');
 
 INSERT INTO `va_pupc`.`nutritional_status` (`patient_id`, `assessment_date`, `nutritional_notes`) VALUES ('1', '2014-03-03 10:22', 'Fair. Patient with PEG in place.');
 
@@ -55,10 +56,37 @@ INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_na
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_rectify_kinect_process::max_height_thresh', '1.50');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_rectify_kinect_process::min_depth_thresh', '1.20');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_rectify_kinect_process::max_depth_thresh', '2.70');
+
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::motion_history_viz_width', '200');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::motion_history_threshold', '5');
-INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::enable_morphology_noise_removal', 'True');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::enable_morphology_noise_removal', 'False');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::motion_histogram_morphology_se_radius', '3.0');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::roi_quadrilateral', '[610 80 610 380 280 340 280 140]');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::mh_scalar_magnitude_high_thresh', '0.1');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prv_motion_estimate_process::mh_scalar_magnitude_low_thresh', '0.1');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::enabled', 'True');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_person_detect_process::enabled', 'True');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::enabled', 'True');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::protocol_check_time_elapse_in_min', '0.1');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::nr_of_no_motion_detected_frames_thresh', '2');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::nr_of_no_persons_detected_frames_thresh', '2');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::total_motion_detected_flag_count_thresh', '5');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::total_persons_detected_flag_count_thresh', '5');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_turning_protocol_process::patient_turned_flag_viz_count_thresh', '90');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::roi_quadrilateral', '[610 80 610 380 280 340 280 140]');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::classifier_choice', 'decision_tree');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::decision_tree_classifier_full_filename', 'C:/pressure_ulcer/resource/decision_tree_pose_classifier.xml');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::decision_tree_max_depth', '8');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::num_of_cross_validations', '3');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::svm_classifier_full_filename', 'C:/pressure_ulcer/resource/svm_pose_classifier.xml');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::svm_C', '10');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_pose_estimate_process::k_nearest_neighbor', '3');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (1, 'gevxl::pressure_ulcer::prevention::pu_prevention_person_detect_process::precomputed_hypotheses_full_filename', 'C:/pressure_ulcer/resource/person_detect_hypotheses.dat');
 
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'vid::pu_assessment_rgbd_cam_source_process::camera_live', 'True');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'vid::pu_assessment_rgbd_cam_source_process::type', 'pcsdk');
@@ -103,6 +131,9 @@ INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_na
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::viz_outer_rect_to_image_border', '60');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::viz_inner_rect_to_image_border', '80');
 INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::viz_depth_or_color_in_depth', 'color_in_depth_view');
+
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::depth_in_rgb_viz_inner_rect_x0y0x1y1', '[160 80 480 280]');
+INSERT INTO `va_pupc`.`experiment_configuration` (`experiment_id`, `parameter_name`, `parameter_value`) VALUES (3, 'gevxl::pressure_ulcer::assessment::pu_assessment_system_proc::hyperspectral_in_rgb_viz_inner_rect_x0y0x1y1', '[240 40 400 220]');
 
 INSERT INTO `va_pupc`.`prevention_session` (`patient_id`, `depth_video_file_directory`, `start_time`, `end_time`) VALUES ('1', '/tmp/barry/session/1', '2013-12-18 9:30', '2013-12-19 9:45');
 

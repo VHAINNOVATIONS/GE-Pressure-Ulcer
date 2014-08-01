@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `VA_PUPC`.`patient_identification` (
   `camera_id` INT NULL,
   `room_number` VARCHAR(20) NULL,
   `room_type` VARCHAR(20) NULL,
+  `age` INT NULL,
+  `medical_history` VARCHAR(2000) NULL,
   PRIMARY KEY (`patient_id`),
   UNIQUE INDEX `va_patient_id_UNIQUE` (`va_patient_id` ASC))
 ENGINE = InnoDB;
@@ -36,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `VA_PUPC`.`patient_admission` (
   `admission_note` VARCHAR(2000) NULL,
   `patient_is_diabetic` VARCHAR(20) NULL,
   `factors_impairing_healing` VARCHAR(512) NULL,
+  `patient_group` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `p_a_id_date` (`id` ASC, `admission_date` ASC),
   CONSTRAINT `patient_admission_fk_pi`
@@ -56,6 +59,9 @@ CREATE TABLE IF NOT EXISTS `VA_PUPC`.`patient_assessment` (
   `patient_id` INT NOT NULL,
   `assessment_date` DATETIME NOT NULL,
   `assessment_note` VARCHAR(2000) NULL,
+  `education_notes` VARCHAR(2000) NULL,
+  `education_understanding` VARCHAR(10) NULL,
+  `education_evidenced_by` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `p_as_id_date` (`id` ASC, `assessment_date` ASC),
   CONSTRAINT `patient_assessment_fk_pi`
