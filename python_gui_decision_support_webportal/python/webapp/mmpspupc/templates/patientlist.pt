@@ -31,6 +31,7 @@
 <!-- jQuery Library  -->
 <script src="/static/js/jquery-2.1.0.js" type="text/javascript"></script>
 <script src="/static/js/jquery-ui-1.10.4.custom.js" type="text/javascript" ></script>
+<script src="/static/js/jquery.validate.js" type="text/javascript" ></script>
 <!-- Spinner and loading indicators -->
 <script src="/static/js/jquery.spinner.js" type="text/javascript"></script>
 <script src="/static/js/script.js" type="text/javascript"></script>
@@ -42,13 +43,18 @@
 <script type="text/javascript" src="/static/js/DataTables/ColReorder.js"></script>
 <script type="text/javascript" src="/static/js/DataTables/ZeroClipboard.js"></script>
 <script type="text/javascript" src="/static/js/DataTables/TableTools.js"></script>
+<!-- Import PUPC scripts -->
+<script type="text/javascript" src="/static/js/patient-identification.js"></script>
+
 <script type="text/javascript">
 
 var table = new Object();
+var patientDataTable;
 
 // This is the main JQuery page function that gets executed after the page is loaded and the
 // the DOM elements are created.
 $(function() {
+	pdialog = new PatientDialog();
 	$('#tablecontainer').hide();
 	// The next JQuery call populates the format types dropdown.
 	// This is done by making an AJAX call to the server using the URL /{application_name}/format-types
@@ -67,17 +73,19 @@ $(function() {
 // The generateTable function generates a new Datatable containing the query results
 function generateTable() {
 	// Generate the table, specifying various options
-	$('#table_canvas').dataTable({
+	patientDataTable = $('#table_canvas').dataTable({
 		"sDom" : 'R<"H"TCf>rt<"F"ip>',
 		"aaData" : table,
-		"aoColumns" : [{"sTitle" : "VA Patient ID", "mData" : "va_patient_id",
-							"mRender": function(data,display,full) {
-											return '<a href="/patient-view?patient_id='+full.patient_id+'">'+data+'</a>';
-											}
+		"aoColumns" : [{"sTitle" : "VA Patient ID", "mData" : "va_patient_id"
+						//	"mRender": function(data,display,full) {
+						//					return '<a href="/patient-view?patient_id='+full.patient_id+'">'+data+'</a>';
+						//					}
 							},
 				 	  {"sTitle" : "Patient Name", "mData" : "patient_name"},
+				 	  {"sTitle" : "Age", "mData" : "age"}
 					  ],
 		"aaSorting": [],
+		"bFilter" : true,
 		"bJQueryUI" : true,
 		"bAutoWidth" : true,
 		"bDeferRender" : true,
@@ -89,6 +97,19 @@ function generateTable() {
 		"bProcessing" : true,
 		"oTableTools" : {
 			"aButtons" : [ 
+				{"sExtends" : "text", "mColumns": "visible", "sButtonText": "Details", "fnClick": viewPatient, 
+					"fnInit": function(nButton,oConfig) { nButton.classList.add("DTTT_button_disabled"); },
+					"fnSelect": function ( nButton, oConfig, nRow ) { nButton.classList.remove("DTTT_button_disabled"); },
+					"sButtonClass": "dt_button_class"},
+				{"sExtends" : "text", "mColumns": "visible", "sButtonText": "New", "fnClick": newPatient, "sButtonClass": "dt_button_class"},
+				{"sExtends" : "text", "mColumns": "visible", "sButtonText": "Edit", "fnClick": editPatient, 
+					"fnInit": function(nButton,oConfig) { nButton.classList.add("DTTT_button_disabled"); },
+					"fnSelect": function ( nButton, oConfig, nRow ) { nButton.classList.remove("DTTT_button_disabled"); },
+					"sButtonClass": "dt_button_class"},
+				{"sExtends" : "text", "mColumns": "visible", "sButtonText": "Delete", "fnClick": deletePatient, 
+					"fnInit": function(nButton,oConfig) { nButton.classList.add("DTTT_button_disabled"); },
+					"fnSelect": function ( nButton, oConfig, nRow ) { nButton.classList.remove("DTTT_button_disabled"); },
+					"sButtonClass": "dt_button_class"},
 				{"sExtends" : "copy", "mColumns": "visible", "sButtonClass": "dt_button_class"},
 				{"sExtends" : "csv",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
 				{"sExtends" : "xls",  "mColumns" : "visible", "sButtonClass": "dt_button_class"},
@@ -97,10 +118,80 @@ function generateTable() {
 			"sSwfPath" : "/static/swf/copy_csv_xls_pdf.swf"
 		}
 	});
+	$('#table_canvas tbody').on( 'click', 'tr', function () {
+		if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+            $('#ToolTables_table_canvas_0').addClass('DTTT_button_disabled')
+            $('#ToolTables_table_canvas_2').addClass('DTTT_button_disabled')
+            $('#ToolTables_table_canvas_3').addClass('DTTT_button_disabled')
+        }
+        else {
+            $('#table_canvas').dataTable().$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            $('#ToolTables_table_canvas_0').removeClass('DTTT_button_disabled')
+            $('#ToolTables_table_canvas_2').removeClass('DTTT_button_disabled')
+            $('#ToolTables_table_canvas_3').removeClass('DTTT_button_disabled')
+        }
+    } );
 }
+
+function viewPatient(node, obj, fdummy) {
+	var rc;
+	var idx = fnGetSelected(patientDataTable);
+	if ( idx < 0 ) {
+		alert('No row selected');
+		return;
+	}
+	window.location.href = "/patient-view?patient_id="+table[idx].patient_id;
+}
+
+function newPatient() {
+	pdialog.patientDialogModeNew(0, table, patientDataTable);
+	pdialog.dialog.dialog("open");
+}
+
+function editPatient(node, obj, fdummy) {
+	var rc;
+	var idx = fnGetSelected(patientDataTable);
+	if ( idx < 0 ) {
+		alert('No row selected');
+		return;
+	}
+	rc = pdialog.patientDialogModeEdit(idx, table[idx].patient_id, table, patientDataTable);
+	if (rc < 0) {
+		alert('Error retreiving patient');
+		return;
+	}
+	pdialog.dialog.dialog("open");
+}
+
+function deletePatient(node, obj, fdummy) {
+	var rc;
+	var idx = fnGetSelected(patientDataTable);
+	if ( idx < 0 ) {
+		alert('No row selected');
+		return;
+	}
+	rc = pdialog.patientDialogModeDelete(idx, table[idx].patient_id, table, patientDataTable);
+	pdialog.confirmDialog.dialog("open");
+}
+
+function fnGetSelected( oTableLocal ) {
+	var aTrs = oTableLocal.fnGetNodes();
+	for ( var i=0 ; i<aTrs.length ; i++ ) {           
+		if ( $(aTrs[i]).hasClass('selected') ) {
+			return i;
+		}
+	}
+	return -1;
+}
+ 
 </script>
 </head>
 <body>
+
+<!-- Include modal dialogs -->
+<span metal:use-macro="patientidentification.macros['patient-identification']" />
 
 <!-- BACK GROUND WRAPPER EFFECTS -->   
 

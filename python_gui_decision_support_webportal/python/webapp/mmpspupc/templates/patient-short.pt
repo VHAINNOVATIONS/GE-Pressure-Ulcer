@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<div id="patient-short-macro-div" metal:define-macro="patient-short">    
+<div id="patient-short-form-div" title="Patient Information">    
+	<p class="validateTips">All form fields are required.</p>
+	
+	<form name="patient-short-form" id="patient-short-form">
+		<fieldset>
+			<input type="hidden" name="patient_id" value="0" />
+			<label for="age">Age</label>
+			<input type="text" name="age" id="age" class="text ui-widget-content ui-corner-all" />
+			<label for="medical_history">Medical History</label>
+			<textarea name="medical_history" id="medical_history" rows="15" cols="101" class="text ui-widget-content ui-corner-all" >
+			</textarea>
+			<div id="short-dialog-msg"></div>
+			<!-- Allow form submission with keyboard without duplicating the dialog button -->
+			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+		</fieldset>
+	</form>
+</div><!--/#patient-short-form-->
+</div>
+</html>

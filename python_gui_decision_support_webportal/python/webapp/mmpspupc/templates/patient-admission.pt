@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<div id="patient-admission-macro-div" metal:define-macro="patient-admission">    
+<div id="patient-admission-form-div" title="Patient Admission">    
+	<!-- <p class="validateTips">All form fields are required.</p> -->
+	
+	<form name="patient-admission-form" id="patient-admission-form">
+		<fieldset>
+			<input type="hidden" name="id" value="0" />
+			<input type="hidden" name="patient_id" value="0" />
+			<label for="admission_date">Admission Date</label>
+			<input type="text" name="admission_date" id="admission_date" class="text ui-widget-content ui-corner-all" />
+			<label for="admission_note">Admission Note</label>
+			<textarea name="admission_note" id="admission_note" rows="15" cols="101" class="text ui-widget-content ui-corner-all" >
+			</textarea>
+			<label for="factors_impairing_healing">Factors Impairing Healing</label>
+			<textarea name="factors_impairing_healing" id="factors_impairing_healing" rows="7" cols="101" class="text ui-widget-content ui-corner-all" >
+			</textarea>
+			<label for="patient_group">Patient Group</label>
+			<select name="patient_group" id="patient_group" class="text ui-widget-content ui-corner-all" >
+				<option>In-Patient</option>
+				<option>Out-Patient</option>
+			</select>
+			<div id="admission-dialog-msg"></div>
+			<!-- Allow form submission with keyboard without duplicating the dialog button -->
+			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+		</fieldset>
+	</form>
+</div><!--/#patient-admission-form-->
+<div id="patient-admission-delete-div" title="Patient admission deletion confirmation">
+	<p>OK to delete this patient admission?</p>
+	<div id="admission-delete-dialog-msg"></div>
+</div>
+</div>
+</html>

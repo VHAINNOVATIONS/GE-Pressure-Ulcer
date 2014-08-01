@@ -15,9 +15,12 @@ class PatientAssessment(Base):
     patient_id = Column('patient_id',Integer)
     assessment_date = Column('assessment_date',DateTime)
     assessment_note = Column('assessment_note',String)
+    education_notes = Column('education_notes',String)
+    education_understanding = Column('education_understanding',String)
+    education_evidenced_by = Column('education_evidenced_by',String)
     keyCol = 'id'
-    editCols = ['assessment_date','assessment_note']
-    editColsLabels = ['Assessment Date','Assessment Note']
+    editCols = ['assessment_date','assessment_note','education_notes','education_understanding','education_evidenced_by']
+    editColsLabels = ['Assessment Date','Assessment Note','Education Notes','Education Understanding','Education Evidenced By']
     editColsTypes = ['date','string']
     displayTableName = 'Patient Assessment'
     
@@ -31,12 +34,15 @@ class PatientAssessment(Base):
         self.patient_id = data['patient_id']
         self.assessment_date = data['assessment_date']
         self.assessment_note = data['assessment_note']
+        self.education_notes = data['education_notes']
+        self.education_understanding = data['education_understanding']
+        self.education_evidenced_by = data['education_evidenced_by']
         
     
     def __json__(self, request):
-        return {'id':self.id, 'patient_id':self.patient_id, 'assessment_date':self.assessment_date.isoformat(' '), 'assessment_note':self.assessment_note }
+        return {'id':self.id, 'patient_id':self.patient_id, 'assessment_date':self.assessment_date.isoformat(' '), 'assessment_note':self.assessment_note, 'education_notes':self.education_notes, 'education_understanding':self.education_understanding, 'education_evidenced_by':self.education_evidenced_by }
 
     def __repr__(self):
-        return "<PatientAssessment(id='%d', patient_id='%d', assessment_date='%s', assessment_note='%s')>" % (
-                self.id, self.patient_id, self.assessment_date, self.assessment_note)
+        return "<PatientAssessment(id='%d', patient_id='%d', assessment_date='%s', assessment_note='%s', education_notes='%s', education_understanding='%s', education_evidenced_by='%s')>" % (
+                self.id, self.patient_id, self.assessment_date, self.assessment_note, self.education_notes, self.education_understanding, self.education_evidenced_by)
 

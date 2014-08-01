@@ -497,10 +497,10 @@ class MainFrame(wx.Frame):
         self.chem_plot_panel.SetSizer(chem_panel_sizer)
         self.chem_plot_panel.Fit()
         # Hide analysis tabs
-        self.assessment_notebook.EnableTab(3, False)
-        self.assessment_notebook.EnableTab(4, False)
-        self.assessment_notebook.EnableTab(5, False)
-        self.assessment_notebook.EnableTab(6, False)
+        #self.assessment_notebook.EnableTab(3, False)
+        #self.assessment_notebook.EnableTab(4, False)
+        #self.assessment_notebook.EnableTab(5, False)
+        #self.assessment_notebook.EnableTab(6, False)
 
 
     def __set_properties(self):
@@ -1384,6 +1384,12 @@ class MainFrame(wx.Frame):
         # Start up thermal camera server
         # thermal_camera_server_path = "C:/Program Files (x86)/MICRO-EPSILON Messtechnik GmbH u Co KG/TIM Connect/Imager.exe"
         thermal_camera_server_path = self.system_config['THERMAL_CAMERA_SERVER_PATH']
+        (junk,executable) = os.path.split(thermal_camera_server_path)
+        # kill old process
+        try:
+            os.system('taskkill /f /im '+executable)
+        except Exception:
+            pass
         startupOptions = '/Invisible'
         print "Starting thermal camera server"
         self.thermal_server_process = subprocess.Popen([thermal_camera_server_path, startupOptions])
@@ -1391,6 +1397,12 @@ class MainFrame(wx.Frame):
         
         # Start up hyperspectral camera server
         hyperspectral_camera_server_path = self.system_config['HYPERSPECTRAL_CAMERA_SERVER_PATH']
+        (junk,executable) = os.path.split(hyperspectral_camera_server_path)
+        # kill old process
+        try:
+            os.system('taskkill /f /im '+executable)
+        except Exception:
+            pass
         print "Starting hyperspectral camera server"
         self.hyperspectral_server_process = subprocess.Popen([hyperspectral_camera_server_path, startupOptions])
         print "PID = %d" % (self.hyperspectral_server_process.pid)
@@ -2334,6 +2346,12 @@ class MainFrame(wx.Frame):
         
         # Start up thermal camera client
         thermal_camera_client_path = self.system_config['THERMAL_CAMERA_CLIENT_PATH']
+        (junk,executable) = os.path.split(thermal_camera_client_path)
+        # kill old process
+        try:
+            os.system('taskkill /f /im '+executable)
+        except Exception:
+            pass
         si = subprocess.STARTUPINFO()
         si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
         si.wShowWindow = 15
@@ -2437,6 +2455,19 @@ class MainFrame(wx.Frame):
                     self.cv_reset_button.Enable()
                     self.VisualControl("playing")
                     self.visual_msg.SetValue("Click one of the 5 view buttons to play that clip")
+                    # Set state of multi-spectral pane
+                    if self.assessmentSession.collection_status_multi_spectral and self.assessmentSession.collection_status_multi_spectral != "Not collected":
+                        self.ms_msg.SetValue(self.assessmentSession.collection_status_multi_spectral)
+                        self.ms_snapshot_button.Disable()
+                        if self.touchscreen:
+                            self.touchframe.touch_snapshot_button.Disable()
+                        self.ms_reset_button.Enable()
+                    else:
+                        self.ms_msg.SetValue("Not collected")
+                        self.ms_snapshot_button.Enable()
+                        if self.touchscreen:
+                            self.touchframe.touch_snapshot_button.Enable()
+                    # End of set state of multi-spectral pane
                 else:
                     self.visual_msg.SetValue(msg)
                     if self.touchscreen:
@@ -2588,6 +2619,8 @@ class MainFrame(wx.Frame):
         else:
             self.InitCanvases()
             self.previewOn = True
+        if self.patient_id > 0 and self.woundId > 0 and self.assessmentId > 0:
+            self.start_stop_button.Enable()
 
     def OnTakeSnapshot(self, event):  # wxGlade: MainFrame.<event_handler>
         """
@@ -2695,6 +2728,10 @@ class Assessment(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.mainframe.Show(True)
         self.mainframe.Maximize(True)
         self.mainframe.panel_1.Disable()
+        # Check if system is not on battery power
+        if not util.GetPowerOnline():
+            rc = util.showMessageDialog("Computer is running on battery power and not AC power. Please insure unit is plugged into wall outlet and the power strip is turned on.", "Power not connected")
+            return 1
         logon = LogonDialog(None)
         logon.SetDb(db)
         rc = logon.ShowModal()

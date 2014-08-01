@@ -342,7 +342,15 @@ class MainFrame(wx.Frame):
             if exc.errno == errno.EEXIST and os.path.isdir(self.session.depth_video_file_directory):
                 pass
             else: 
-                raise
+                # raise
+                msg = "Unable to access directory: " + str(self.session.depth_video_file_directory) + ". Please insure that the drive is attached and unlocked."
+                rc = util.showMessageDialog(msg, "Drive unavailable")
+                self.start_button.Enable()
+                self.stop_button.Disable()
+                (rc,msg) = self.sessionController.deleteRecord(self.session.id)
+                if rc != 0:
+                    self.SetStatusText(msg)
+                return
         freespace = util.GetFreeSpaceGB(self.director.GetDepthFileDirectory())
         if freespace < int(self.system_config['PREVENTION_FILE_SIZE_GB']):
             msg = "Not enough space to record patient. Need " + str(self.system_config['PREVENTION_FILE_SIZE_GB']) + " GB but found " + str(freespace) + " GB."
@@ -469,6 +477,10 @@ class Prevention(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.SetTopWindow(self.mainframe)
         self.mainframe.Show(True)
         self.mainframe.panel_1.Disable()
+        # Check if system is not on battery power
+        if not util.GetPowerOnline():
+            rc = util.showMessageDialog("Computer is running on battery power and not AC power. Please insure unit is plugged into wall outlet and the power strip is turned on.", "Power not connected")
+            return 1
         logon = LogonDialog(None)
         logon.SetDb(db)
         rc = logon.ShowModal()

@@ -2,6 +2,8 @@ import wx
 import ctypes
 import os
 import platform
+import subprocess
+import re
 
 
 def showMessageDialog(message, caption, flag=wx.ICON_ERROR):
@@ -26,3 +28,17 @@ def GetFreeSpaceGB(folder):
         return st.f_bavail * st.f_frsize/1024/1024/1024
     else:
         return 0
+    
+def GetPowerOnline():
+    """
+    Determine if the computer system is running on power (TRUE) or batter(FALSE)
+    """
+    proc = subprocess.Popen('wmic.exe /NameSpace:"\\\\root\\WMI" Path BatteryStatus Get PowerOnline',
+                            stdout=subprocess.PIPE, shell=True)
+    (out,err) = proc.communicate()
+    online = re.search('.*\n(TRUE|FALSE)',out).group(1)
+    if online == 'TRUE':
+        return True
+    else:
+        return False
+

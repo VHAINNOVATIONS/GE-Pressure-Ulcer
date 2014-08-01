@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+<div id="patient-identification-macro-div" metal:define-macro="patient-identification">    
+<div id="patient-identification-form-div" title="Patient Information">    
+	<p class="validateTips">All form fields are required.</p>
+	
+	<form name="patient-identification-form" id="patient-identification-form">
+		<fieldset>
+			<input type="hidden" name="patient_id" value="0" />
+			<label for="va_patient_id">VA Patient Id.</label>
+			<input type="text" name="va_patient_id" id="va_patient_id" class="text ui-widget-content ui-corner-all" />
+			<label for="patient_name">Name</label>
+			<input type="text" name="patient_name" id="patient_name" class="text ui-widget-content ui-corner-all" />
+			<label for="age">Age</label>
+			<input type="text" name="age" id="age" class="text ui-widget-content ui-corner-all" />
+			<label for="medical_history">Medical History</label>
+			<textarea name="medical_history" id="medical_history" rows="15" cols="101" class="text ui-widget-content ui-corner-all" >
+			</textarea>
+			<label for="camera_id">Prevention System Camera Number</label>
+			<input type="text" name="camera_id" id="camera_id" class="text ui-widget-content ui-corner-all" />
+			<div id="patient-dialog-msg"></div>
+			<!-- Allow form submission with keyboard without duplicating the dialog button -->
+			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+		</fieldset>
+	</form>
+</div><!--/#patient-identification-form-->
+<div id="patient-identification-delete-div" title="Patient deletion confirmation">
+	<p>OK to delete this patient?</p>
+	<div id="patient-delete-dialog-msg"></div>
+</div>
+</div>
+</html>
