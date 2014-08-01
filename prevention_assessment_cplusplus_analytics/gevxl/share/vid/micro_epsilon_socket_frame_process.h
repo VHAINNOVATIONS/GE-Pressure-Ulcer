@@ -22,6 +22,7 @@
 //#include "micro_epsilon_socket_camera.h"
 #include <vcl_iostream.h>
 
+
 namespace gevxl {
 namespace vid {
 
@@ -40,6 +41,9 @@ public:
 
   /// Configure the camera and the process
   virtual bool configure( gevxl::util::config_file & config );
+
+  /// uninitialize method
+  virtual void uninitialize(void);
 
   /// Set the visualization mode
   void change_viz_mode(void)

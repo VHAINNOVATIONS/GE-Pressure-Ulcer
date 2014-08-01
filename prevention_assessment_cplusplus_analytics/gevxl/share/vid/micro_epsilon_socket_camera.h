@@ -51,6 +51,10 @@ public:
   // copy the message buffer from the socket session
   void copy_message_buffer(char *buffer, int length);
 
+  // set and get the camera shutdown flag
+  void set_camera_shutdown_flag(void);
+  bool get_camera_shutdown_flag(void);
+
 private:
 
   // copy thermal frame buffer
@@ -96,6 +100,9 @@ private:
 	int captured_millisecond_;
 
   double captured_frame_system_time_;
+
+  boost::thread *socket_camera_server_thread_;
+  bool camera_shutdown_flag_;
 };
 
 }} // end namespaces

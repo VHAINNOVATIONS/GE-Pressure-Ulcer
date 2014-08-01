@@ -48,21 +48,35 @@ micro_epsilon_socket_frame_process::micro_epsilon_socket_frame_process( char con
 
 micro_epsilon_socket_frame_process::~micro_epsilon_socket_frame_process()
 {
-	if(capture_mode_ == "camera") {
+  uninitialize();
+}
+
+void micro_epsilon_socket_frame_process::uninitialize(void)
+{
+  if(capture_mode_ == "camera") {
 		
 		// terminate the thermal_cam_capture.exe process
 		//vcl_string call = "taskkill /F /T /IM thermal_cam_capture.exe";
 		//int retval = system(call.c_str());
 
+    vcl_cout << "micro_epsilon_socket_frame_process::uninitialize has been invoked." << vcl_endl;
+
 		if(NULL != camera_) {
+    
+      vcl_cout << "micro_epsilon_socket_frame_process::uninitialize, before set_camera_shutdown_flag." << vcl_endl;
+      camera_->set_camera_shutdown_flag();
+      vcl_cout << "micro_epsilon_socket_frame_process::uninitialize, before sleep(1000)." << vcl_endl;
+      gevxl::threading::sleep(1000);
+      
+      vcl_cout << "micro_epsilon_socket_frame_process::uninitialize before delete camera_." << vcl_endl;
 			delete camera_;
+      vcl_cout << "micro_epsilon_socket_frame_process::uninitialize after delete camera_." << vcl_endl;
 			camera_ = NULL;
 		}
 
 		set_save_out_flag(false);
 	}
 }
-
 
 bool micro_epsilon_socket_frame_process::camera_frames_save(const int frame_nr)
 {
