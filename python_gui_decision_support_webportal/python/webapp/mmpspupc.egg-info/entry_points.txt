@@ -1,5 +1,0 @@
-      [paste.app_factory]
-      main = mmpspupc:main
-      [console_scripts]
-      initialize_mmpspupc_db = mmpspupc.scripts.initializedb:main
-      
